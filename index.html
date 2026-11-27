@@ -3,9 +3,9 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>GitPDF Pro — Advanced GitHub & Blogger PDF Reader</title>
+  <title>Madhyamik PYQ — Advanced PDF Library & Reader</title>
 
-  <!-- PDF.js 3.11.174 (Stable UMD build with TextLayer CSS) -->
+  <!-- PDF.js 3.11.174 -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf_viewer.min.css" />
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 
@@ -21,15 +21,16 @@
       --text-muted: #9aa3b8;
       --accent: #6366f1;
       --accent-hover: #4f46e5;
+      --folder-color: #f59e0b;
+      --pdf-color: #ef4444;
       --danger: #ef4444;
-      --success: #10b981;
       --shadow: 0 10px 30px rgba(0, 0, 0, 0.45);
       --toolbar-h: 54px;
-      --sidebar-w: 280px;
+      --sidebar-w: 295px;
     }
 
     [data-theme="light"] {
-      --bg-app: #e5e7eb;
+      --bg-app: #eef1f6;
       --bg-toolbar: #ffffff;
       --bg-sidebar: #f8fafc;
       --bg-card: #ffffff;
@@ -37,7 +38,7 @@
       --border: #d8dee9;
       --text-main: #111827;
       --text-muted: #6b7280;
-      --shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+      --shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
     }
 
     [data-theme="sepia"] {
@@ -51,7 +52,7 @@
       --text-muted: #78654b;
       --accent: #b45309;
       --accent-hover: #92400e;
-      --shadow: 0 8px 24px rgba(59, 47, 30, 0.16);
+      --shadow: 0 8px 24px rgba(59, 47, 30, 0.15);
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -64,13 +65,10 @@
       color: var(--text-main);
     }
 
-    /* Progress bar */
     #reading-progress {
       position: fixed;
-      top: 0;
-      left: 0;
-      height: 3px;
-      width: 0%;
+      top: 0; left: 0;
+      height: 3px; width: 0%;
       background: linear-gradient(90deg, var(--accent), #a855f7);
       z-index: 1000;
       transition: width 0.15s ease;
@@ -85,619 +83,349 @@
       align-items: center;
       justify-content: space-between;
       padding: 0 10px;
-      gap: 8px;
+      gap: 6px;
       position: relative;
       z-index: 50;
       user-select: none;
     }
-
-    .toolbar-group {
-      display: flex;
-      align-items: center;
-      gap: 4px;
-      min-width: 0;
-    }
+    .toolbar-group { display: flex; align-items: center; gap: 4px; min-width: 0; }
 
     .brand {
-      font-weight: 700;
-      font-size: 14px;
-      letter-spacing: 0.2px;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      padding: 0 6px;
-      white-space: nowrap;
+      font-weight: 700; font-size: 14px;
+      display: flex; align-items: center; gap: 6px;
+      padding: 0 6px; white-space: nowrap; cursor: pointer;
     }
     .brand span {
-      background: var(--accent);
-      color: #fff;
-      font-size: 10px;
-      padding: 2px 5px;
-      border-radius: 4px;
-      font-weight: 600;
+      background: var(--accent); color: #fff;
+      font-size: 10px; padding: 2px 5px; border-radius: 4px;
     }
-
-    .divider {
-      width: 1px;
-      height: 22px;
-      background: var(--border);
-      margin: 0 4px;
-      flex-shrink: 0;
-    }
+    .divider { width: 1px; height: 22px; background: var(--border); margin: 0 4px; flex-shrink: 0; }
 
     .btn {
       background: transparent;
       border: 1px solid transparent;
       color: var(--text-main);
-      height: 34px;
-      min-width: 34px;
-      padding: 0 8px;
-      border-radius: 7px;
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 6px;
-      font-size: 13px;
-      transition: background 0.15s, border-color 0.15s, color 0.15s;
-      white-space: nowrap;
+      height: 34px; min-width: 34px; padding: 0 8px;
+      border-radius: 7px; cursor: pointer;
+      display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+      font-size: 13px; white-space: nowrap;
+      transition: background 0.15s, border-color 0.15s;
     }
     .btn:hover { background: var(--bg-hover); }
     .btn.active { background: rgba(99, 102, 241, 0.18); color: var(--accent); border-color: rgba(99, 102, 241, 0.35); }
-    .btn-primary {
-      background: var(--accent);
-      color: #fff;
-      font-weight: 600;
-      padding: 0 12px;
-    }
+    .btn-outline { border-color: var(--border); background: var(--bg-card); }
+    .btn-primary { background: var(--accent); color: #fff; font-weight: 600; padding: 0 12px; }
     .btn-primary:hover { background: var(--accent-hover); }
     .btn svg { width: 17px; height: 17px; flex-shrink: 0; }
 
     .page-nav {
-      display: flex;
-      align-items: center;
-      gap: 4px;
-      background: var(--bg-card);
-      border: 1px solid var(--border);
-      border-radius: 7px;
-      padding: 2px 6px;
-      height: 34px;
-      font-size: 13px;
+      display: flex; align-items: center; gap: 4px;
+      background: var(--bg-card); border: 1px solid var(--border);
+      border-radius: 7px; padding: 2px 6px; height: 34px; font-size: 13px;
     }
     .page-nav input {
-      width: 44px;
-      background: transparent;
-      border: none;
-      color: var(--text-main);
-      text-align: center;
-      font-size: 13px;
-      font-weight: 600;
-      outline: none;
+      width: 42px; background: transparent; border: none;
+      color: var(--text-main); text-align: center; font-size: 13px; font-weight: 600; outline: none;
     }
     .page-nav span { color: var(--text-muted); }
 
     select.tb-select {
-      height: 34px;
-      background: var(--bg-card);
-      color: var(--text-main);
-      border: 1px solid var(--border);
-      border-radius: 7px;
-      padding: 0 8px;
-      font-size: 12.5px;
-      outline: none;
-      cursor: pointer;
+      height: 34px; background: var(--bg-card); color: var(--text-main);
+      border: 1px solid var(--border); border-radius: 7px;
+      padding: 0 8px; font-size: 12.5px; outline: none; cursor: pointer;
     }
 
-    /* Floating Search Bar */
-    .search-bar {
-      position: fixed;
-      top: calc(var(--toolbar-h) + 10px);
-      right: 16px;
-      background: var(--bg-toolbar);
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      box-shadow: var(--shadow);
-      padding: 8px;
-      display: none;
-      flex-direction: column;
-      gap: 8px;
-      width: 340px;
-      max-width: calc(100vw - 32px);
-      z-index: 80;
-    }
-    .search-bar.open { display: flex; }
-    .search-row {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-    .search-row input {
-      flex: 1;
-      height: 34px;
-      background: var(--bg-card);
-      border: 1px solid var(--border);
-      border-radius: 7px;
-      padding: 0 10px;
-      color: var(--text-main);
-      font-size: 13px;
-      outline: none;
-    }
-    .search-row input:focus { border-color: var(--accent); }
-    .search-meta {
-      font-size: 12px;
-      color: var(--text-muted);
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-    .search-results-list {
-      max-height: 220px;
-      overflow-y: auto;
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
-    }
-    .search-item {
-      padding: 7px 9px;
-      border-radius: 6px;
-      background: var(--bg-card);
-      cursor: pointer;
-      font-size: 12px;
-      line-height: 1.4;
-      border: 1px solid transparent;
-    }
-    .search-item:hover, .search-item.active {
-      border-color: var(--accent);
-      background: var(--bg-hover);
-    }
-    .search-item mark {
-      background: #facc15;
-      color: #000;
-      padding: 0 2px;
-      border-radius: 2px;
-    }
+    /* Hide PDF-specific toolbar controls while browsing library */
+    body.mode-library .pdf-only { display: none !important; }
+    body.embed-mode .hide-in-embed { display: none !important; }
+    body.no-download .download-only { display: none !important; }
+    body.single-embed .library-only { display: none !important; }
 
-    /* TTS Floating Bar */
-    .tts-bar {
-      position: fixed;
-      bottom: 18px;
-      left: 50%;
-      transform: translateX(-50%);
-      background: var(--bg-toolbar);
-      border: 1px solid var(--border);
-      box-shadow: var(--shadow);
-      border-radius: 999px;
-      padding: 6px 14px;
-      display: none;
-      align-items: center;
-      gap: 8px;
-      z-index: 85;
-      font-size: 12.5px;
-    }
-    .tts-bar.open { display: flex; }
-
-    /* Main Workspace */
-    .workspace {
-      display: flex;
-      height: calc(100vh - var(--toolbar-h));
-      position: relative;
-    }
+    /* Workspace */
+    .workspace { display: flex; height: calc(100vh - var(--toolbar-h)); position: relative; }
 
     /* Sidebar */
     .sidebar {
       width: var(--sidebar-w);
       background: var(--bg-sidebar);
       border-right: 1px solid var(--border);
-      display: flex;
-      flex-direction: column;
-      flex-shrink: 0;
+      display: flex; flex-direction: column; flex-shrink: 0;
       transition: margin-left 0.22s ease;
       z-index: 40;
     }
     .sidebar.collapsed { margin-left: calc(var(--sidebar-w) * -1); }
 
     .sidebar-tabs {
-      display: flex;
-      border-bottom: 1px solid var(--border);
-      padding: 6px;
-      gap: 4px;
+      display: flex; border-bottom: 1px solid var(--border);
+      padding: 6px; gap: 3px;
     }
     .sidebar-tab {
-      flex: 1;
-      background: transparent;
-      border: none;
-      color: var(--text-muted);
-      padding: 7px 4px;
-      border-radius: 6px;
-      font-size: 12px;
-      font-weight: 600;
-      cursor: pointer;
+      flex: 1; background: transparent; border: none;
+      color: var(--text-muted); padding: 7px 3px;
+      border-radius: 6px; font-size: 11.5px; font-weight: 600; cursor: pointer;
     }
-    .sidebar-tab.active {
-      background: var(--bg-hover);
-      color: var(--text-main);
-    }
+    .sidebar-tab.active { background: var(--bg-hover); color: var(--text-main); }
 
-    .sidebar-panel {
-      flex: 1;
-      overflow-y: auto;
-      padding: 12px;
-      display: none;
-    }
+    .sidebar-panel { flex: 1; overflow-y: auto; padding: 10px; display: none; }
     .sidebar-panel.active { display: block; }
 
-    /* Thumbnails */
-    .thumb-card {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 6px;
-      padding: 8px;
+    /* Sidebar Mini Library */
+    .sb-search {
+      width: 100%; height: 34px;
+      background: var(--bg-card); border: 1px solid var(--border);
+      border-radius: 7px; padding: 0 10px;
+      color: var(--text-main); font-size: 12.5px; outline: none;
       margin-bottom: 10px;
-      border-radius: 8px;
-      cursor: pointer;
-      border: 2px solid transparent;
-      background: var(--bg-card);
     }
-    .thumb-card:hover { border-color: var(--border); }
-    .thumb-card.active { border-color: var(--accent); }
-    .thumb-card canvas {
-      max-width: 100%;
-      height: auto;
-      border-radius: 4px;
-      background: #fff;
+    .sb-search:focus { border-color: var(--accent); }
+    .sb-item {
+      display: flex; align-items: center; gap: 8px;
+      padding: 8px 9px; border-radius: 7px; cursor: pointer;
+      font-size: 12.5px; line-height: 1.35; margin-bottom: 4px;
+      border: 1px solid transparent; word-break: break-word;
     }
-    .thumb-label { font-size: 11.5px; color: var(--text-muted); font-weight: 600; }
+    .sb-item:hover { background: var(--bg-hover); }
+    .sb-item.active { background: rgba(99, 102, 241, 0.16); border-color: var(--accent); color: var(--accent); font-weight: 600; }
+    .sb-folder-title {
+      font-size: 11px; font-weight: 700; text-transform: uppercase;
+      color: var(--text-muted); margin: 10px 4px 5px; letter-spacing: 0.4px;
+    }
 
-    /* Outline */
-    .outline-item {
-      padding: 6px 8px;
-      border-radius: 6px;
-      font-size: 13px;
-      cursor: pointer;
-      color: var(--text-main);
-      line-height: 1.35;
-    }
-    .outline-item:hover { background: var(--bg-hover); color: var(--accent); }
-
-    /* Bookmarks & Notes */
-    .note-box {
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-      margin-bottom: 14px;
-      padding-bottom: 12px;
-      border-bottom: 1px solid var(--border);
-    }
-    .note-box textarea {
-      width: 100%;
-      min-height: 68px;
-      resize: vertical;
-      background: var(--bg-card);
-      border: 1px solid var(--border);
-      border-radius: 7px;
-      padding: 8px;
-      color: var(--text-main);
-      font-size: 12.5px;
-      font-family: inherit;
-      outline: none;
-    }
-    .bookmark-item {
-      background: var(--bg-card);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: 9px 10px;
-      margin-bottom: 8px;
-      font-size: 12.5px;
-    }
-    .bookmark-head {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 4px;
-    }
-    .bookmark-link {
-      color: var(--accent);
-      font-weight: 700;
-      cursor: pointer;
-    }
-    .bookmark-del {
-      background: none;
-      border: none;
-      color: var(--text-muted);
-      cursor: pointer;
-      font-size: 14px;
-    }
-    .bookmark-del:hover { color: var(--danger); }
-
-    /* Viewer Area */
+    /* Main Viewer / Library Container */
     .viewer-container {
-      flex: 1;
-      overflow: auto;
-      position: relative;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      padding: 20px 16px 60px;
-      scroll-behavior: smooth;
+      flex: 1; overflow: auto; position: relative;
+      display: flex; flex-direction: column; align-items: center;
+      padding: 20px 16px 60px; scroll-behavior: smooth;
     }
 
-    #pages-wrapper {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 18px;
-      width: 100%;
+    /* Full Library Explorer View */
+    .library-view {
+      width: 100%; max-width: 1040px;
+      display: flex; flex-direction: column; gap: 16px;
     }
-    #pages-wrapper.view-book {
-      display: grid;
-      grid-template-columns: repeat(2, auto);
-      justify-content: center;
-      gap: 16px;
-    }
-    #pages-wrapper.view-single .page-shell { display: none; }
-    #pages-wrapper.view-single .page-shell.current-single { display: block; }
-
-    .page-shell {
-      position: relative;
-      background: #ffffff;
-      box-shadow: var(--shadow);
-      border-radius: 4px;
-      overflow: hidden;
-      transition: filter 0.2s ease;
-    }
-    .page-shell canvas {
-      display: block;
-    }
-    .page-badge {
-      position: absolute;
-      bottom: 8px;
-      right: 10px;
-      background: rgba(0, 0, 0, 0.55);
-      color: #fff;
-      font-size: 11px;
-      padding: 2px 7px;
-      border-radius: 99px;
-      pointer-events: none;
-      z-index: 5;
-      opacity: 0;
-      transition: opacity 0.2s;
-    }
-    .page-shell:hover .page-badge { opacity: 1; }
-
-    /* PDF Smart Dark Mode */
-    body.pdf-dark-mode .page-shell canvas {
-      filter: invert(0.9) hue-rotate(180deg) contrast(0.95);
-    }
-    body.pdf-dark-mode .page-shell {
-      background: #1a1a1a;
-    }
-
-    /* Text Layer adjustments & search highlights */
-    .textLayer {
-      opacity: 1;
-      line-height: 1;
-    }
-    .textLayer span::selection {
-      background: rgba(99, 102, 241, 0.35);
-    }
-    .textLayer .search-highlight {
-      background: rgba(250, 204, 21, 0.55) !important;
-      color: transparent !important;
-      border-radius: 2px;
-    }
-    .textLayer .search-highlight.current-match {
-      background: rgba(249, 115, 22, 0.72) !important;
-      outline: 2px solid #f97316;
-    }
-
-    /* Welcome / Empty State */
-    .welcome-screen {
-      max-width: 640px;
-      width: 100%;
-      margin: auto;
-      background: var(--bg-toolbar);
-      border: 1px solid var(--border);
-      border-radius: 16px;
-      padding: 32px 28px;
-      box-shadow: var(--shadow);
-      text-align: center;
-    }
-    .welcome-screen h1 {
-      font-size: 24px;
-      margin-bottom: 8px;
-    }
-    .welcome-screen p {
-      color: var(--text-muted);
-      font-size: 14px;
-      line-height: 1.5;
-      margin-bottom: 22px;
-    }
-    .url-form {
-      display: flex;
-      gap: 8px;
-      margin-bottom: 14px;
-    }
-    .url-form input {
-      flex: 1;
-      height: 42px;
-      background: var(--bg-card);
-      border: 1px solid var(--border);
-      border-radius: 9px;
-      padding: 0 14px;
-      color: var(--text-main);
-      font-size: 13.5px;
-      outline: none;
-    }
-    .url-form input:focus { border-color: var(--accent); }
-
-    .dropzone {
-      border: 2px dashed var(--border);
-      border-radius: 12px;
-      padding: 22px;
-      margin: 16px 0;
-      cursor: pointer;
-      transition: border-color 0.2s, background 0.2s;
-      color: var(--text-muted);
-      font-size: 13.5px;
-    }
-    .dropzone:hover, .dropzone.dragover {
-      border-color: var(--accent);
-      background: rgba(99, 102, 241, 0.08);
-      color: var(--text-main);
-    }
-
-    .quick-actions {
-      display: flex;
-      justify-content: center;
-      flex-wrap: wrap;
-      gap: 10px;
-      margin-top: 14px;
-    }
-
-    /* Loading & Error Banner */
-    .loader-overlay {
-      position: fixed;
-      inset: 0;
-      background: rgba(15, 17, 23, 0.72);
-      backdrop-filter: blur(4px);
-      display: none;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: 14px;
-      z-index: 200;
-      color: #fff;
-    }
-    .loader-overlay.show { display: flex; }
-    .spinner {
-      width: 42px;
-      height: 42px;
-      border: 4px solid rgba(255, 255, 255, 0.18);
-      border-top-color: var(--accent);
-      border-radius: 50%;
-      animation: spin 0.8s linear infinite;
-    }
-    @keyframes spin { to { transform: rotate(360deg); } }
-
-    /* Modal */
-    .modal-backdrop {
-      position: fixed;
-      inset: 0;
-      background: rgba(0, 0, 0, 0.65);
-      backdrop-filter: blur(3px);
-      display: none;
-      align-items: center;
-      justify-content: center;
-      padding: 16px;
-      z-index: 300;
-    }
-    .modal-backdrop.open { display: flex; }
-    .modal {
+    .lib-header {
       background: var(--bg-toolbar);
       border: 1px solid var(--border);
       border-radius: 14px;
-      width: 100%;
-      max-width: 600px;
-      max-height: 90vh;
-      overflow-y: auto;
+      padding: 18px 20px;
+      display: flex; flex-direction: column; gap: 12px;
       box-shadow: var(--shadow);
-      padding: 22px;
+    }
+    .lib-top-row {
+      display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;
+    }
+    .lib-top-row h1 { font-size: 19px; display: flex; align-items: center; gap: 8px; }
+    .lib-search-row { display: flex; gap: 8px; flex-wrap: wrap; }
+    .lib-search-row input {
+      flex: 1; min-width: 220px; height: 40px;
+      background: var(--bg-card); border: 1px solid var(--border);
+      border-radius: 9px; padding: 0 14px; color: var(--text-main);
+      font-size: 13.5px; outline: none;
+    }
+    .lib-search-row input:focus { border-color: var(--accent); }
+
+    .breadcrumbs {
+      display: flex; align-items: center; flex-wrap: wrap; gap: 6px;
+      font-size: 13px; color: var(--text-muted);
+    }
+    .crumb {
+      background: var(--bg-card); border: 1px solid var(--border);
+      padding: 4px 10px; border-radius: 99px; cursor: pointer;
+      color: var(--text-main); font-weight: 500;
+    }
+    .crumb:hover { border-color: var(--accent); color: var(--accent); }
+    .crumb.current { background: var(--accent); border-color: var(--accent); color: #fff; cursor: default; }
+
+    .lib-section-title {
+      font-size: 12.5px; font-weight: 700; text-transform: uppercase;
+      color: var(--text-muted); letter-spacing: 0.6px; margin-top: 4px;
+    }
+
+    .grid-cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 12px;
+    }
+    .card {
+      background: var(--bg-toolbar);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 14px;
+      display: flex; flex-direction: column; justify-content: space-between; gap: 10px;
+      cursor: pointer;
+      transition: transform 0.14s ease, border-color 0.15s, box-shadow 0.15s;
+    }
+    .card:hover {
+      transform: translateY(-2px);
+      border-color: var(--accent);
+      box-shadow: var(--shadow);
+    }
+    .card-head { display: flex; align-items: flex-start; gap: 11px; }
+    .card-icon {
+      width: 38px; height: 38px; border-radius: 9px; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 19px;
+    }
+    .card-icon.folder { background: rgba(245, 158, 11, 0.15); color: var(--folder-color); }
+    .card-icon.pdf { background: rgba(239, 68, 68, 0.15); color: var(--pdf-color); }
+    .card-title { font-size: 14px; font-weight: 600; line-height: 1.35; word-break: break-word; }
+    .card-sub { font-size: 11.5px; color: var(--text-muted); margin-top: 3px; word-break: break-word; }
+    .card-footer {
+      display: flex; justify-content: space-between; align-items: center;
+      padding-top: 8px; border-top: 1px solid var(--border); font-size: 11.5px; color: var(--text-muted);
+    }
+    .card-actions { display: flex; gap: 4px; }
+    .mini-btn {
+      background: var(--bg-card); border: 1px solid var(--border);
+      color: var(--text-main); font-size: 11.5px; padding: 4px 8px;
+      border-radius: 6px; cursor: pointer; font-weight: 600;
+    }
+    .mini-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+    /* Thumbnails, Outline, Bookmarks */
+    .thumb-card {
+      display: flex; flex-direction: column; align-items: center; gap: 6px;
+      padding: 8px; margin-bottom: 10px; border-radius: 8px;
+      cursor: pointer; border: 2px solid transparent; background: var(--bg-card);
+    }
+    .thumb-card:hover { border-color: var(--border); }
+    .thumb-card.active { border-color: var(--accent); }
+    .thumb-card canvas { max-width: 100%; height: auto; border-radius: 4px; background: #fff; }
+    .thumb-label { font-size: 11.5px; color: var(--text-muted); font-weight: 600; }
+
+    .outline-item { padding: 6px 8px; border-radius: 6px; font-size: 13px; cursor: pointer; line-height: 1.35; }
+    .outline-item:hover { background: var(--bg-hover); color: var(--accent); }
+
+    .note-box { display: flex; flex-direction: column; gap: 6px; margin-bottom: 14px; padding-bottom: 12px; border-bottom: 1px solid var(--border); }
+    .note-box textarea {
+      width: 100%; min-height: 68px; resize: vertical;
+      background: var(--bg-card); border: 1px solid var(--border);
+      border-radius: 7px; padding: 8px; color: var(--text-main); font-size: 12.5px; font-family: inherit; outline: none;
+    }
+    .bookmark-item { background: var(--bg-card); border: 1px solid var(--border); border-radius: 8px; padding: 9px 10px; margin-bottom: 8px; font-size: 12.5px; }
+    .bookmark-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; }
+    .bookmark-link { color: var(--accent); font-weight: 700; cursor: pointer; }
+    .bookmark-del { background: none; border: none; color: var(--text-muted); cursor: pointer; }
+    .bookmark-del:hover { color: var(--danger); }
+
+    /* PDF Pages */
+    #pages-wrapper { display: flex; flex-direction: column; align-items: center; gap: 18px; width: 100%; }
+    #pages-wrapper.view-book { display: grid; grid-template-columns: repeat(2, auto); justify-content: center; gap: 16px; }
+    #pages-wrapper.view-single .page-shell { display: none; }
+    #pages-wrapper.view-single .page-shell.current-single { display: block; }
+
+    .page-shell { position: relative; background: #fff; box-shadow: var(--shadow); border-radius: 4px; overflow: hidden; }
+    .page-shell canvas { display: block; }
+    .page-badge {
+      position: absolute; bottom: 8px; right: 10px;
+      background: rgba(0,0,0,0.55); color: #fff; font-size: 11px;
+      padding: 2px 7px; border-radius: 99px; pointer-events: none; z-index: 5; opacity: 0; transition: opacity 0.2s;
+    }
+    .page-shell:hover .page-badge { opacity: 1; }
+
+    body.pdf-dark-mode .page-shell canvas { filter: invert(0.9) hue-rotate(180deg) contrast(0.95); }
+    body.pdf-dark-mode .page-shell { background: #1a1a1a; }
+
+    .textLayer { opacity: 1; line-height: 1; }
+    .textLayer span::selection { background: rgba(99, 102, 241, 0.35); }
+    .textLayer .search-highlight { background: rgba(250, 204, 21, 0.55) !important; color: transparent !important; border-radius: 2px; }
+    .textLayer .search-highlight.current-match { background: rgba(249, 115, 22, 0.72) !important; outline: 2px solid #f97316; }
+
+    /* Floating Search Bar */
+    .search-bar {
+      position: fixed; top: calc(var(--toolbar-h) + 10px); right: 16px;
+      background: var(--bg-toolbar); border: 1px solid var(--border);
+      border-radius: 10px; box-shadow: var(--shadow); padding: 8px;
+      display: none; flex-direction: column; gap: 8px;
+      width: 340px; max-width: calc(100vw - 32px); z-index: 80;
+    }
+    .search-bar.open { display: flex; }
+    .search-row { display: flex; align-items: center; gap: 6px; }
+    .search-row input {
+      flex: 1; height: 34px; background: var(--bg-card);
+      border: 1px solid var(--border); border-radius: 7px;
+      padding: 0 10px; color: var(--text-main); font-size: 13px; outline: none;
+    }
+    .search-row input:focus { border-color: var(--accent); }
+    .search-meta { font-size: 12px; color: var(--text-muted); display: flex; justify-content: space-between; }
+    .search-results-list { max-height: 220px; overflow-y: auto; display: flex; flex-direction: column; gap: 4px; }
+    .search-item {
+      padding: 7px 9px; border-radius: 6px; background: var(--bg-card);
+      cursor: pointer; font-size: 12px; line-height: 1.4; border: 1px solid transparent;
+    }
+    .search-item:hover, .search-item.active { border-color: var(--accent); background: var(--bg-hover); }
+    .search-item mark { background: #facc15; color: #000; padding: 0 2px; border-radius: 2px; }
+
+    /* TTS Bar */
+    .tts-bar {
+      position: fixed; bottom: 18px; left: 50%; transform: translateX(-50%);
+      background: var(--bg-toolbar); border: 1px solid var(--border);
+      box-shadow: var(--shadow); border-radius: 999px; padding: 6px 14px;
+      display: none; align-items: center; gap: 8px; z-index: 85; font-size: 12.5px;
+    }
+    .tts-bar.open { display: flex; }
+
+    /* Loader */
+    .loader-overlay {
+      position: fixed; inset: 0; background: rgba(15, 17, 23, 0.72);
+      backdrop-filter: blur(4px); display: none; flex-direction: column;
+      align-items: center; justify-content: center; gap: 14px; z-index: 200; color: #fff;
+    }
+    .loader-overlay.show { display: flex; }
+    .spinner {
+      width: 42px; height: 42px; border: 4px solid rgba(255,255,255,0.18);
+      border-top-color: var(--accent); border-radius: 50%; animation: spin 0.8s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* Modals */
+    .modal-backdrop {
+      position: fixed; inset: 0; background: rgba(0,0,0,0.65);
+      backdrop-filter: blur(3px); display: none; align-items: center;
+      justify-content: center; padding: 16px; z-index: 300;
+    }
+    .modal-backdrop.open { display: flex; }
+    .modal {
+      background: var(--bg-toolbar); border: 1px solid var(--border);
+      border-radius: 14px; width: 100%; max-width: 610px;
+      max-height: 90vh; overflow-y: auto; box-shadow: var(--shadow); padding: 22px;
     }
     .modal-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 16px;
-      padding-bottom: 10px;
-      border-bottom: 1px solid var(--border);
+      display: flex; justify-content: space-between; align-items: center;
+      margin-bottom: 16px; padding-bottom: 10px; border-bottom: 1px solid var(--border);
     }
     .modal-header h2 { font-size: 17px; }
-    .form-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
-      margin-bottom: 14px;
-    }
-    .form-field {
-      display: flex;
-      flex-direction: column;
-      gap: 5px;
-      margin-bottom: 12px;
-    }
-    .form-field label {
-      font-size: 12px;
-      font-weight: 600;
-      color: var(--text-muted);
-    }
+    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .form-field { display: flex; flex-direction: column; gap: 5px; margin-bottom: 12px; }
+    .form-field label { font-size: 12px; font-weight: 600; color: var(--text-muted); }
     .form-field input, .form-field select, .form-field textarea {
-      background: var(--bg-card);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: 9px 11px;
-      color: var(--text-main);
-      font-size: 13px;
-      outline: none;
-      font-family: inherit;
+      background: var(--bg-card); border: 1px solid var(--border);
+      border-radius: 8px; padding: 9px 11px; color: var(--text-main);
+      font-size: 13px; outline: none; font-family: inherit;
     }
     .form-field textarea.code-out {
       font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-      font-size: 12px;
-      min-height: 110px;
-      resize: vertical;
+      font-size: 12px; min-height: 118px; resize: vertical;
     }
-    .check-row {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 14px;
-      margin-bottom: 14px;
-      font-size: 13px;
-    }
-    .check-row label {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      cursor: pointer;
-    }
+    .check-row { display: flex; flex-wrap: wrap; gap: 14px; margin-bottom: 14px; font-size: 13px; }
+    .check-row label { display: flex; align-items: center; gap: 6px; cursor: pointer; }
 
     /* Toast */
     .toast {
-      position: fixed;
-      bottom: 20px;
-      right: 20px;
-      background: var(--bg-card);
-      color: var(--text-main);
-      border: 1px solid var(--accent);
-      padding: 10px 16px;
-      border-radius: 9px;
-      box-shadow: var(--shadow);
-      font-size: 13px;
-      z-index: 400;
-      opacity: 0;
-      transform: translateY(10px);
-      transition: all 0.2s;
-      pointer-events: none;
+      position: fixed; bottom: 20px; right: 20px; background: var(--bg-card);
+      color: var(--text-main); border: 1px solid var(--accent);
+      padding: 10px 16px; border-radius: 9px; box-shadow: var(--shadow);
+      font-size: 13px; z-index: 400; opacity: 0; transform: translateY(10px);
+      transition: all 0.2s; pointer-events: none;
     }
     .toast.show { opacity: 1; transform: translateY(0); }
 
-    /* Embed Mode Cleanup */
-    body.embed-mode .hide-in-embed { display: none !important; }
-    body.no-download .download-only { display: none !important; }
-
-    /* Responsive */
     @media (max-width: 860px) {
       .hide-sm { display: none !important; }
-      .sidebar {
-        position: fixed;
-        top: var(--toolbar-h);
-        bottom: 0;
-        left: 0;
-        box-shadow: var(--shadow);
-      }
+      .sidebar { position: fixed; top: var(--toolbar-h); bottom: 0; left: 0; box-shadow: var(--shadow); }
       #pages-wrapper.view-book { grid-template-columns: 1fr; }
       .form-grid { grid-template-columns: 1fr; }
     }
-
     @media print {
       .toolbar, .sidebar, .search-bar, .tts-bar, #reading-progress { display: none !important; }
       .workspace, .viewer-container { height: auto !important; overflow: visible !important; padding: 0 !important; }
@@ -705,7 +433,7 @@
     }
   </style>
 </head>
-<body>
+<body class="mode-library">
   <div id="reading-progress"></div>
 
   <!-- Top Toolbar -->
@@ -714,21 +442,24 @@
       <button class="btn" id="btn-sidebar" title="Toggle Sidebar">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="9" y1="3" x2="9" y2="21"/></svg>
       </button>
-      <div class="brand hide-sm">GitPDF <span>PRO</span></div>
-      <div class="divider hide-in-embed"></div>
-      <button class="btn hide-in-embed" id="btn-open-modal" title="Load GitHub PDF or Local File">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg>
-        <span class="hide-sm">Open PDF</span>
+      <div class="brand" id="btn-home" title="Back to PDF Library">
+        Madhyamik PYQ <span>PDF</span>
+      </div>
+      <button class="btn btn-outline pdf-only library-only" id="btn-back-lib" title="Back to Folder Library">
+        ← Library
+      </button>
+      <button class="btn hide-in-embed hide-sm" id="btn-open-modal" title="Load Any External GitHub PDF or Local File">
+        + Custom PDF
       </button>
     </div>
 
-    <!-- Center Navigation & Zoom -->
-    <div class="toolbar-group">
+    <!-- Center PDF Controls (Shown when reading a PDF) -->
+    <div class="toolbar-group pdf-only">
       <button class="btn" id="btn-prev" title="Previous Page (←)">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
       </button>
       <div class="page-nav">
-        <input type="number" id="page-input" value="1" min="1" aria-label="Current Page" />
+        <input type="number" id="page-input" value="1" min="1" aria-label="Page" />
         <span>/ <b id="page-count">0</b></span>
       </div>
       <button class="btn" id="btn-next" title="Next Page (→)">
@@ -737,76 +468,54 @@
 
       <div class="divider"></div>
 
-      <button class="btn" id="btn-zoom-out" title="Zoom Out (-)">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="8" y1="11" x2="14" y2="11"/></svg>
-      </button>
-      <select class="tb-select" id="zoom-select" title="Zoom Level">
-        <option value="fit-width">Fit Width</option>
+      <button class="btn" id="btn-zoom-out" title="Zoom Out (-)">−</button>
+      <select class="tb-select" id="zoom-select" title="Zoom">
+        <option value="fit-width" selected>Fit Width</option>
         <option value="fit-page">Fit Page</option>
-        <option value="0.5">50%</option>
         <option value="0.75">75%</option>
         <option value="1">100%</option>
-        <option value="1.25" selected>125%</option>
+        <option value="1.25">125%</option>
         <option value="1.5">150%</option>
         <option value="2">200%</option>
         <option value="2.5">250%</option>
-        <option value="3">300%</option>
       </select>
-      <button class="btn" id="btn-zoom-in" title="Zoom In (+)">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg>
-      </button>
+      <button class="btn" id="btn-zoom-in" title="Zoom In (+)">+</button>
     </div>
 
     <!-- Right Tools -->
     <div class="toolbar-group">
-      <button class="btn" id="btn-search" title="Search in PDF (Ctrl+F)">
+      <button class="btn pdf-only" id="btn-search" title="Search Inside PDF (Ctrl+F)">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
       </button>
-      <select class="tb-select hide-sm" id="view-mode" title="Layout Mode">
+      <select class="tb-select pdf-only hide-sm" id="view-mode" title="Layout Mode">
         <option value="continuous">Scroll</option>
-        <option value="single">Single Page</option>
-        <option value="book">Book Spread</option>
+        <option value="single">Single</option>
+        <option value="book">Book</option>
       </select>
-      <button class="btn hide-sm" id="btn-rotate" title="Rotate 90° (R)">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-      </button>
-      <button class="btn" id="btn-pdf-dark" title="Smart Dark Mode for PDF Pages">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
-      </button>
+      <button class="btn pdf-only hide-sm" id="btn-rotate" title="Rotate 90° (R)">⟳</button>
+      <button class="btn pdf-only" id="btn-pdf-dark" title="Night Mode for PDF Pages">🌙</button>
       <select class="tb-select hide-sm" id="theme-select" title="UI Theme">
-        <option value="dark">Dark UI</option>
-        <option value="light">Light UI</option>
-        <option value="sepia">Sepia UI</option>
+        <option value="dark">Dark</option>
+        <option value="light">Light</option>
+        <option value="sepia">Sepia</option>
       </select>
-      <button class="btn hide-sm" id="btn-tts" title="Read Current Page Aloud">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/></svg>
-      </button>
-      <button class="btn" id="btn-bookmark" title="Bookmark Current Page (B)">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
-      </button>
-      <button class="btn download-only" id="btn-download" title="Download PDF">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-      </button>
-      <button class="btn hide-sm" id="btn-info" title="Document Info">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
-      </button>
-      <button class="btn" id="btn-fullscreen" title="Fullscreen (F)">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 3 21 3 21 9"/><polyline points="9 21 3 21 3 15"/><line x1="21" y1="3" x2="14" y2="10"/><line x1="3" y1="21" x2="10" y2="14"/></svg>
-      </button>
+      <button class="btn pdf-only hide-sm" id="btn-tts" title="Read Aloud">🔊</button>
+      <button class="btn pdf-only" id="btn-bookmark" title="Bookmark Page (B)">🔖</button>
+      <button class="btn pdf-only download-only" id="btn-download" title="Download PDF">⬇</button>
+      <button class="btn" id="btn-fullscreen" title="Fullscreen (F)">⛶</button>
       <button class="btn btn-primary hide-in-embed" id="btn-embed-modal" title="Generate Blogger Embed Code">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
-        <span class="hide-sm">Blogger Embed</span>
+        &lt;/&gt; <span class="hide-sm">Blogger Embed</span>
       </button>
     </div>
   </header>
 
-  <!-- Floating Search Box -->
+  <!-- Floating In-PDF Search -->
   <div class="search-bar" id="search-bar">
     <div class="search-row">
-      <input type="text" id="search-input" placeholder="Search text across all pages..." />
-      <button class="btn" id="search-prev" title="Previous Match">↑</button>
-      <button class="btn" id="search-next" title="Next Match">↓</button>
-      <button class="btn" id="search-close" title="Close">✕</button>
+      <input type="text" id="search-input" placeholder="Search text inside this PDF..." />
+      <button class="btn" id="search-prev">↑</button>
+      <button class="btn" id="search-next">↓</button>
+      <button class="btn" id="search-close">✕</button>
     </div>
     <div class="search-meta">
       <span id="search-status">Type to search</span>
@@ -815,9 +524,9 @@
     <div class="search-results-list" id="search-results-list"></div>
   </div>
 
-  <!-- TTS Bar -->
+  <!-- TTS Floating Bar -->
   <div class="tts-bar" id="tts-bar">
-    <span id="tts-status">🔊 Ready (Page 1)</span>
+    <span id="tts-status">🔊 Ready</span>
     <button class="btn" id="tts-play">Play</button>
     <button class="btn" id="tts-stop">Stop</button>
     <select class="tb-select" id="tts-rate" style="height:28px;">
@@ -825,93 +534,100 @@
       <option value="1" selected>1.0x</option>
       <option value="1.25">1.25x</option>
       <option value="1.5">1.5x</option>
-      <option value="2">2.0x</option>
     </select>
     <button class="btn" id="tts-close">✕</button>
   </div>
 
-  <!-- Workspace -->
+  <!-- Main Workspace -->
   <div class="workspace">
     <!-- Sidebar -->
     <aside class="sidebar collapsed" id="sidebar">
       <div class="sidebar-tabs">
-        <button class="sidebar-tab active" data-tab="thumbs">Pages</button>
-        <button class="sidebar-tab" data-tab="outline">Contents</button>
-        <button class="sidebar-tab" data-tab="notes">Bookmarks</button>
+        <button class="sidebar-tab active library-only" data-tab="library">Files</button>
+        <button class="sidebar-tab" data-tab="thumbs">Pages</button>
+        <button class="sidebar-tab" data-tab="outline">TOC</button>
+        <button class="sidebar-tab" data-tab="notes">Notes</button>
       </div>
-      <div class="sidebar-panel active" id="panel-thumbs"></div>
+
+      <!-- Sidebar Tab 1: Quick Repo File Switcher -->
+      <div class="sidebar-panel active" id="panel-library">
+        <input type="text" class="sb-search" id="sb-file-search" placeholder="Filter PDFs across all folders..." />
+        <div id="sb-file-list">Loading repository files...</div>
+      </div>
+
+      <!-- Sidebar Tab 2: Page Thumbnails -->
+      <div class="sidebar-panel" id="panel-thumbs"></div>
+
+      <!-- Sidebar Tab 3: Outline -->
       <div class="sidebar-panel" id="panel-outline">
-        <p style="color:var(--text-muted);font-size:13px;">No outline available.</p>
+        <p style="color:var(--text-muted);font-size:13px;">Open a PDF to view Table of Contents.</p>
       </div>
+
+      <!-- Sidebar Tab 4: Bookmarks & Notes -->
       <div class="sidebar-panel" id="panel-notes">
         <div class="note-box">
-          <strong style="font-size:12.5px;">Add Note for Page <span id="note-page-num">1</span></strong>
+          <strong style="font-size:12.5px;">Note for Page <span id="note-page-num">1</span></strong>
           <textarea id="note-input" placeholder="Write a bookmark note..."></textarea>
-          <button class="btn btn-primary" id="btn-save-note" style="width:100%;">Save Bookmark / Note</button>
+          <button class="btn btn-primary" id="btn-save-note" style="width:100%;">Save Bookmark</button>
         </div>
         <div id="bookmarks-list"></div>
       </div>
     </aside>
 
-    <!-- Main PDF Viewer -->
+    <!-- Main Container -->
     <main class="viewer-container" id="viewer-container">
-      <!-- Welcome Screen -->
-      <div class="welcome-screen" id="welcome-screen">
-        <h1>📄 GitPDF Pro Reader</h1>
-        <p>Load any PDF stored in a public <strong>GitHub repository</strong>, read with advanced tools, and generate clean <strong>Blogger embed codes</strong> in seconds.</p>
-        <form class="url-form" id="welcome-form">
-          <input type="url" id="welcome-url" placeholder="Paste GitHub PDF URL (e.g., https://github.com/user/repo/blob/main/doc.pdf)" required />
-          <button type="submit" class="btn btn-primary">Load PDF</button>
-        </form>
-        <div style="text-align:left; font-size:12px; color:var(--text-muted); margin-bottom:12px;">
-          <label style="display:inline-flex; align-items:center; gap:6px; cursor:pointer;">
-            <input type="checkbox" id="welcome-cdn" checked />
-            Use fast <b>jsDelivr CDN</b> for GitHub PDFs (Recommended for Blogger; uncheck for files &gt; 50MB)
-          </label>
+      <!-- Auto GitHub Folder & PDF Explorer -->
+      <section class="library-view" id="library-view">
+        <div class="lib-header">
+          <div class="lib-top-row">
+            <h1>📚 <span id="lib-title">Madhyamik PYQ PDF Library</span></h1>
+            <div style="display:flex; gap:8px; flex-wrap:wrap;">
+              <button class="btn btn-outline hide-in-embed" id="btn-embed-folder">🔗 Embed This Folder in Blogger</button>
+              <button class="btn btn-outline" id="btn-refresh-repo" title="Refresh GitHub Folder List">↻ Refresh</button>
+            </div>
+          </div>
+          <div class="lib-search-row">
+            <input type="text" id="lib-search-input" placeholder="🔍 Search any Subject, Medium, or Year (e.g., 2026, maths, english)..." />
+          </div>
+          <div class="breadcrumbs" id="breadcrumbs"></div>
         </div>
-        <div class="dropzone" id="dropzone">
-          <strong>Click or Drag & Drop</strong> a local PDF file here to preview
-          <input type="file" id="file-input" accept="application/pdf" hidden />
-        </div>
-        <div class="quick-actions">
-          <button class="btn" id="btn-load-sample">✨ Try Sample GitHub PDF</button>
-          <button class="btn" id="btn-welcome-embed">🔗 Open Blogger Embed Generator</button>
-        </div>
-      </div>
 
-      <!-- Rendered Pages -->
-      <div id="pages-wrapper"></div>
+        <div id="lib-content">
+          <p style="color:var(--text-muted); text-align:center; padding:40px;">Scanning folders & PDFs from GitHub...</p>
+        </div>
+      </section>
+
+      <!-- Rendered PDF Pages -->
+      <div id="pages-wrapper" style="display:none;"></div>
     </main>
   </div>
 
   <!-- Loader -->
   <div class="loader-overlay" id="loader">
     <div class="spinner"></div>
-    <div id="loader-text">Loading PDF from GitHub...</div>
+    <div id="loader-text">Loading PDF...</div>
   </div>
 
-  <!-- Open URL Modal -->
+  <!-- Open External / Local PDF Modal -->
   <div class="modal-backdrop" id="open-modal">
     <div class="modal">
       <div class="modal-header">
-        <h2>Open GitHub or Local PDF</h2>
+        <h2>Open Custom GitHub or Local PDF</h2>
         <button class="btn" data-close="open-modal">✕</button>
       </div>
       <div class="form-field">
-        <label>GitHub PDF URL (Standard blob URL, raw URL, or jsDelivr URL)</label>
-        <input type="url" id="modal-pdf-url" placeholder="https://github.com/username/repo/blob/main/file.pdf" />
-      </div>
-      <div class="check-row">
-        <label><input type="checkbox" id="modal-use-cdn" checked /> Route GitHub URL via jsDelivr CDN (Faster)</label>
+        <label>GitHub PDF URL (Normal blob link, raw link, or jsDelivr link)</label>
+        <input type="url" id="modal-pdf-url" placeholder="https://github.com/prasanta28887-math/madhyamik-pyq-pdf/blob/main/..." />
       </div>
       <div style="display:flex; gap:8px; justify-content:space-between; flex-wrap:wrap;">
-        <button class="btn" id="btn-modal-local">📁 Choose Local PDF</button>
+        <button class="btn btn-outline" id="btn-modal-local">📁 Open Local PDF</button>
+        <input type="file" id="file-input" accept="application/pdf" hidden />
         <button class="btn btn-primary" id="btn-modal-load">Load PDF</button>
       </div>
     </div>
   </div>
 
-  <!-- Blogger Embed Generator Modal -->
+  <!-- Blogger Embed Code Generator Modal -->
   <div class="modal-backdrop" id="embed-modal">
     <div class="modal">
       <div class="modal-header">
@@ -919,23 +635,24 @@
         <button class="btn" data-close="embed-modal">✕</button>
       </div>
       <div class="form-field">
-        <label>1. Your Hosted Reader URL (GitHub Pages URL of this index.html)</label>
-        <input type="url" id="embed-reader-url" placeholder="https://yourusername.github.io/pdf-reader/" />
+        <label>What do you want to embed in Blogger?</label>
+        <select id="embed-type">
+          <option value="pdf">Single PDF File</option>
+          <option value="folder">Specific Subject / Folder (with all subfolders & PDFs)</option>
+          <option value="library">Entire Madhyamik PYQ Library</option>
+        </select>
       </div>
-      <div class="form-field">
-        <label>2. GitHub PDF Link (Paste normal GitHub link — auto-converted!)</label>
-        <input type="url" id="embed-pdf-url" placeholder="https://github.com/username/repo/blob/main/ebook.pdf" />
+      <div class="form-field" id="embed-target-pdf-wrap">
+        <label>PDF Path or GitHub Link</label>
+        <input type="text" id="embed-pdf-path" placeholder="english_medium/maths_with_watermark/madhyamik_2026_...pdf" />
+      </div>
+      <div class="form-field" id="embed-target-folder-wrap" style="display:none;">
+        <label>Folder Path inside Repo</label>
+        <input type="text" id="embed-folder-path" placeholder="english_medium/maths_with_watermark" />
       </div>
       <div class="form-grid">
         <div class="form-field">
-          <label>Delivery Method</label>
-          <select id="embed-cdn">
-            <option value="jsdelivr">jsDelivr CDN (Fastest, ≤50MB)</option>
-            <option value="raw">GitHub Raw (Any size)</option>
-          </select>
-        </div>
-        <div class="form-field">
-          <label>Default UI Theme</label>
+          <label>UI Theme</label>
           <select id="embed-theme">
             <option value="dark">Dark</option>
             <option value="light">Light</option>
@@ -943,63 +660,64 @@
           </select>
         </div>
         <div class="form-field">
-          <label>Embed Height</label>
-          <input type="text" id="embed-height" value="750px" />
-        </div>
-        <div class="form-field">
-          <label>Start Page</label>
-          <input type="number" id="embed-page" value="1" min="1" />
+          <label>Height in Blogger</label>
+          <input type="text" id="embed-height" value="760px" />
         </div>
       </div>
       <div class="check-row">
-        <label><input type="checkbox" id="embed-compact" checked /> Clean Embed Mode (Hide Open/Embed buttons)</label>
+        <label><input type="checkbox" id="embed-compact" checked /> Clean Blogger Mode</label>
         <label><input type="checkbox" id="embed-download" checked /> Allow Download</label>
-        <label><input type="checkbox" id="embed-pdfdark" /> Smart Dark PDF Pages</label>
+        <label><input type="checkbox" id="embed-pdfdark" /> Dark PDF Pages</label>
       </div>
       <div class="form-field">
-        <label>3. Paste this HTML in Blogger (HTML View of your Post)</label>
+        <label>Copy & Paste in Blogger (HTML View)</label>
         <textarea class="code-out" id="embed-output" readonly></textarea>
       </div>
       <div style="display:flex; gap:8px; justify-content:flex-end;">
-        <button class="btn" id="btn-test-embed">Open Preview Link</button>
+        <button class="btn btn-outline" id="btn-test-embed">Preview</button>
         <button class="btn btn-primary" id="btn-copy-embed">📋 Copy Blogger Code</button>
       </div>
-    </div>
-  </div>
-
-  <!-- Document Info Modal -->
-  <div class="modal-backdrop" id="info-modal">
-    <div class="modal">
-      <div class="modal-header">
-        <h2>Document Properties</h2>
-        <button class="btn" data-close="info-modal">✕</button>
-      </div>
-      <div id="doc-info-content" style="font-size:13.5px; line-height:1.8;">No document loaded.</div>
     </div>
   </div>
 
   <div class="toast" id="toast"></div>
 
   <script>
-    // Configure PDF.js Worker
+    // =========================================================================
+    // REPOSITORY CONFIG (Pre-configured for your GitHub Repo!)
+    // =========================================================================
+    const REPO = {
+      owner: 'prasanta28887-math',
+      name: 'madhyamik-pyq-pdf',
+      branch: 'main',
+      readerBase: 'https://prasanta28887-math.github.io/madhyamik-pyq-pdf/'
+    };
+
     pdfjsLib.GlobalWorkerOptions.workerSrc =
       'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
 
-    const SAMPLE_PDF =
-      'https://github.com/mozilla/pdf.js/blob/master/web/compressed.tracemonkey-pldi-09.pdf';
+    const $ = (id) => document.getElementById(id);
+    const viewerContainer = $('viewer-container');
+    const pagesWrapper = $('pages-wrapper');
 
-    // App State
     const state = {
+      // Repo library state
+      allFiles: [],         // [{ path, name, folder, size }]
+      currentFolder: '',    // '' = root, or 'english_medium/maths_with_watermark'
+      lockedRootFolder: '', // when embedded with ?folder=...
+
+      // PDF reader state
       pdfDoc: null,
-      rawInputUrl: '',
+      currentPath: '',      // repo-relative path if loaded from repo
       resolvedUrl: '',
+      fallbackUrl: '',
       docKey: '',
       currentPage: 1,
       numPages: 0,
       scale: 1.25,
-      zoomMode: '1.25',
+      zoomMode: 'fit-width',
       rotation: 0,
-      viewMode: 'continuous', // continuous | single | book
+      viewMode: 'continuous',
       pageObserver: null,
       thumbObserver: null,
       renderedPages: new Set(),
@@ -1012,142 +730,490 @@
       ttsActive: false
     };
 
-    // DOM Shortcuts
-    const $ = (id) => document.getElementById(id);
-    const viewerContainer = $('viewer-container');
-    const pagesWrapper = $('pages-wrapper');
-
-    // Utility: Toast Notification
+    // Utilities
     function showToast(msg) {
       const t = $('toast');
       t.textContent = msg;
       t.classList.add('show');
       clearTimeout(t._timer);
-      t._timer = setTimeout(() => t.classList.remove('show'), 2600);
+      t._timer = setTimeout(() => t.classList.remove('show'), 2500);
     }
 
-    function escapeHtml(str) {
-      return String(str || '').replace(/[&<>"']/g, (m) => ({
+    function escapeHtml(s) {
+      return String(s || '').replace(/[&<>"']/g, (m) => ({
         '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
       }[m]));
     }
 
-    // Smart GitHub Link Converter
-    function convertGitHubUrl(url, useCdn = true) {
-      if (!url) return '';
-      url = url.trim();
-
-      // Match: https://github.com/user/repo/blob/branch/path/to/file.pdf
-      const blobMatch = url.match(/^https?:\/\/github\.com\/([^\/]+)\/([^\/]+)\/blob\/([^\/]+)\/(.+)$/);
-      if (blobMatch) {
-        const [, user, repo, branch, path] = blobMatch;
-        return useCdn
-          ? `https://cdn.jsdelivr.net/gh/${user}/${repo}@${branch}/${path}`
-          : `https://raw.githubusercontent.com/${user}/${repo}/${branch}/${path}`;
-      }
-
-      // Match: https://raw.githubusercontent.com/user/repo/branch/path/to/file.pdf
-      const rawMatch = url.match(/^https?:\/\/raw\.githubusercontent\.com\/([^\/]+)\/([^\/]+)\/([^\/]+)\/(.+)$/);
-      if (rawMatch && useCdn) {
-        const [, user, repo, branch, path] = rawMatch;
-        return `https://cdn.jsdelivr.net/gh/${user}/${repo}@${branch}/${path}`;
-      }
-
-      return url;
+    function prettyName(raw) {
+      return raw
+        .replace(/\.pdf$/i, '')
+        .replace(/[_-]+/g, ' ')
+        .replace(/\s+/g, ' ')
+        .trim()
+        .replace(/\b\w/g, (c) => c.toUpperCase());
     }
 
-    // Loader control
-    function setLoading(show, text = 'Loading PDF...') {
+    function formatSize(bytes) {
+      if (!bytes) return '';
+      if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(0) + ' KB';
+      return (bytes / (1024 * 1024)).toFixed(2) + ' MB';
+    }
+
+    function encodePath(path) {
+      return path.split('/').map(encodeURIComponent).join('/');
+    }
+
+    function repoUrlsForPath(relPath) {
+      const clean = relPath.replace(/^\/+/, '');
+      const enc = encodePath(clean);
+      return {
+        cdn: `https://cdn.jsdelivr.net/gh/${REPO.owner}/${REPO.name}@${REPO.branch}/${enc}`,
+        raw: `https://raw.githubusercontent.com/${REPO.owner}/${REPO.name}/${REPO.branch}/${enc}`
+      };
+    }
+
+    function normalizePdfInput(input) {
+      input = (input || '').trim();
+      if (!input) return { primary: '', fallback: '', relPath: '' };
+
+      // Check if it's a GitHub blob URL
+      const blob = input.match(/^https?:\/\/github\.com\/([^\/]+)\/([^\/]+)\/blob\/([^\/]+)\/(.+)$/);
+      if (blob) {
+        const [, u, r, b, p] = blob;
+        const rel = (u === REPO.owner && r === REPO.name) ? decodeURIComponent(p) : '';
+        return {
+          primary: `https://cdn.jsdelivr.net/gh/${u}/${r}@${b}/${p}`,
+          fallback: `https://raw.githubusercontent.com/${u}/${r}/${b}/${p}`,
+          relPath: rel
+        };
+      }
+      // Check if it's already an HTTP URL
+      if (/^https?:\/\//i.test(input)) {
+        const rawMatch = input.match(/^https?:\/\/raw\.githubusercontent\.com\/([^\/]+)\/([^\/]+)\/([^\/]+)\/(.+)$/);
+        if (rawMatch) {
+          const [, u, r, b, p] = rawMatch;
+          return {
+            primary: `https://cdn.jsdelivr.net/gh/${u}/${r}@${b}/${p}`,
+            fallback: input,
+            relPath: (u === REPO.owner && r === REPO.name) ? decodeURIComponent(p) : ''
+          };
+        }
+        return { primary: input, fallback: '', relPath: '' };
+      }
+      // Otherwise treat as relative path inside this repo
+      const urls = repoUrlsForPath(input);
+      return { primary: urls.cdn, fallback: urls.raw, relPath: input.replace(/^\/+/, '') };
+    }
+
+    function setLoading(show, text = 'Loading...') {
       $('loader-text').textContent = text;
       $('loader').classList.toggle('show', show);
     }
 
-    // Load PDF from URL or Uint8Array
+    // =========================================================================
+    // AUTO GITHUB REPO FOLDER & SUBFOLDER DISCOVERY
+    // =========================================================================
+    async function fetchRepoTree(forceRefresh = false) {
+      const cacheKey = `repo_tree_${REPO.owner}_${REPO.name}_${REPO.branch}`;
+      if (!forceRefresh) {
+        try {
+          const cached = JSON.parse(sessionStorage.getItem(cacheKey) || 'null');
+          if (cached && Date.now() - cached.time < 10 * 60 * 1000 && cached.files?.length) {
+            state.allFiles = cached.files;
+            renderLibrary();
+            renderSidebarFiles();
+            return;
+          }
+        } catch {}
+      }
+
+      let pdfFiles = [];
+
+      // 1) Primary: GitHub Git Trees API (recursive — finds ALL nested folders/subfolders)
+      try {
+        const res = await fetch(
+          `https://api.github.com/repos/${REPO.owner}/${REPO.name}/git/trees/${REPO.branch}?recursive=1`
+        );
+        if (res.ok) {
+          const data = await res.json();
+          pdfFiles = (data.tree || [])
+            .filter((item) => item.type === 'blob' && /\.pdf$/i.test(item.path))
+            .map((item) => {
+              const parts = item.path.split('/');
+              const name = parts.pop();
+              return { path: item.path, name, folder: parts.join('/'), size: item.size || 0 };
+            });
+        }
+      } catch {}
+
+      // 2) Backup: jsDelivr Data API (no GitHub API rate-limit!)
+      if (!pdfFiles.length) {
+        try {
+          const res = await fetch(
+            `https://data.jsdelivr.com/v1/packages/gh/${REPO.owner}/${REPO.name}@${REPO.branch}?structure=flat`
+          );
+          if (res.ok) {
+            const data = await res.json();
+            pdfFiles = (data.files || [])
+              .filter((f) => /\.pdf$/i.test(f.name))
+              .map((f) => {
+                const clean = f.name.replace(/^\/+/, '');
+                const parts = clean.split('/');
+                const name = parts.pop();
+                return { path: clean, name, folder: parts.join('/'), size: f.size || 0 };
+              });
+          }
+        } catch {}
+      }
+
+      pdfFiles.sort((a, b) => b.name.localeCompare(a.name, undefined, { numeric: true }));
+      state.allFiles = pdfFiles;
+
+      if (pdfFiles.length) {
+        try {
+          sessionStorage.setItem(cacheKey, JSON.stringify({ time: Date.now(), files: pdfFiles }));
+        } catch {}
+      }
+
+      renderLibrary();
+      renderSidebarFiles();
+    }
+
+    // Switch between Library View and PDF Reader View
+    function showLibraryView(folderPath = state.currentFolder) {
+      stopTTS();
+      state.currentFolder = folderPath;
+      document.body.classList.add('mode-library');
+      $('library-view').style.display = 'flex';
+      pagesWrapper.style.display = 'none';
+      $('search-bar').classList.remove('open');
+      $('reading-progress').style.width = '0%';
+      renderLibrary();
+    }
+
+    function showReaderView() {
+      document.body.classList.remove('mode-library');
+      $('library-view').style.display = 'none';
+      pagesWrapper.style.display = 'flex';
+    }
+
+    // Render Breadcrumbs + Subfolders + PDFs inside currentFolder
+    function renderLibrary() {
+      const query = ($('lib-search-input').value || '').trim().toLowerCase();
+      const rootLock = state.lockedRootFolder;
+      const cur = state.currentFolder || '';
+
+      // Title
+      $('lib-title').textContent = cur
+        ? prettyName(cur.split('/').pop())
+        : 'Madhyamik PYQ PDF Library';
+
+      // Breadcrumbs
+      const bc = $('breadcrumbs');
+      bc.innerHTML = '';
+      const addCrumb = (label, path, isCurrent) => {
+        const el = document.createElement('span');
+        el.className = 'crumb' + (isCurrent ? ' current' : '');
+        el.textContent = label;
+        if (!isCurrent) el.onclick = () => { $('lib-search-input').value = ''; showLibraryView(path); };
+        bc.appendChild(el);
+      };
+
+      if (!rootLock) addCrumb('🏠 All Subjects', '', cur === '' && !query);
+      else addCrumb('📁 ' + prettyName(rootLock.split('/').pop()), rootLock, cur === rootLock && !query);
+
+      if (cur && cur !== rootLock) {
+        const basePrefix = rootLock ? rootLock + '/' : '';
+        const rel = cur.startsWith(basePrefix) ? cur.slice(basePrefix.length) : cur;
+        const segs = rel.split('/').filter(Boolean);
+        let acc = rootLock;
+        segs.forEach((seg, idx) => {
+          acc = acc ? `${acc}/${seg}` : seg;
+          const sep = document.createElement('span');
+          sep.textContent = '›';
+          bc.appendChild(sep);
+          addCrumb(prettyName(seg), acc, idx === segs.length - 1 && !query);
+        });
+      }
+
+      const content = $('lib-content');
+      if (!state.allFiles.length) {
+        content.innerHTML = `<p style="color:var(--text-muted);text-align:center;padding:30px;">No PDF files found in <b>${REPO.owner}/${REPO.name}</b>. Click Refresh or verify the repo is Public.</p>`;
+        return;
+      }
+
+      // Filter scope (respect lockedRootFolder if set)
+      const scopedFiles = rootLock
+        ? state.allFiles.filter((f) => f.folder === rootLock || f.folder.startsWith(rootLock + '/'))
+        : state.allFiles;
+
+      // Global Search Mode
+      if (query) {
+        const matches = scopedFiles.filter(
+          (f) => f.path.toLowerCase().includes(query) || prettyName(f.name).toLowerCase().includes(query)
+        );
+        if (!matches.length) {
+          content.innerHTML = `<p style="color:var(--text-muted);text-align:center;padding:30px;">No PDFs matching "<b>${escapeHtml(query)}</b>".</p>`;
+          return;
+        }
+        content.innerHTML = `<div class="lib-section-title">Search Results (${matches.length} PDFs)</div><div class="grid-cards" id="grid-pdfs"></div>`;
+        const grid = $('grid-pdfs');
+        matches.forEach((f) => grid.appendChild(createPdfCard(f, true)));
+        return;
+      }
+
+      // Folder View: Find direct child subfolders & direct PDFs
+      const folderCounts = new Map();
+      const directPdfs = [];
+      const prefix = cur ? cur + '/' : '';
+
+      scopedFiles.forEach((f) => {
+        if (f.folder === cur) {
+          directPdfs.push(f);
+        } else if (cur === '' || f.folder.startsWith(prefix)) {
+          const rest = cur ? f.folder.slice(prefix.length) : f.folder;
+          const nextFolder = rest.split('/')[0];
+          if (nextFolder) {
+            const fullSub = cur ? `${cur}/${nextFolder}` : nextFolder;
+            folderCounts.set(fullSub, (folderCounts.get(fullSub) || 0) + 1);
+          }
+        }
+      });
+
+      content.innerHTML = '';
+
+      // Render Subfolders
+      if (folderCounts.size) {
+        const title = document.createElement('div');
+        title.className = 'lib-section-title';
+        title.textContent = `Folders (${folderCounts.size})`;
+        content.appendChild(title);
+
+        const fGrid = document.createElement('div');
+        fGrid.className = 'grid-cards';
+        fGrid.style.margin = '10px 0 22px';
+
+        [...folderCounts.entries()]
+          .sort((a, b) => a[0].localeCompare(b[0]))
+          .forEach(([subPath, count]) => {
+            const segName = subPath.split('/').pop();
+            const card = document.createElement('div');
+            card.className = 'card';
+            card.innerHTML = `
+              <div class="card-head">
+                <div class="card-icon folder">📁</div>
+                <div>
+                  <div class="card-title">${escapeHtml(prettyName(segName))}</div>
+                  <div class="card-sub">${count} PDF${count > 1 ? 's' : ''} inside</div>
+                </div>
+              </div>
+              <div class="card-footer">
+                <span>Open folder →</span>
+                <div class="card-actions hide-in-embed">
+                  <button class="mini-btn" data-embed-folder="${escapeHtml(subPath)}" title="Get Blogger Embed Code for this Folder">&lt;/&gt; Embed</button>
+                </div>
+              </div>
+            `;
+            card.onclick = (e) => {
+              const embBtn = e.target.closest('[data-embed-folder]');
+              if (embBtn) {
+                e.stopPropagation();
+                openEmbedModal('folder', embBtn.dataset.embedFolder);
+                return;
+              }
+              showLibraryView(subPath);
+            };
+            fGrid.appendChild(card);
+          });
+        content.appendChild(fGrid);
+      }
+
+      // Render Direct PDFs
+      if (directPdfs.length) {
+        const title = document.createElement('div');
+        title.className = 'lib-section-title';
+        title.textContent = `PDF Question Papers (${directPdfs.length})`;
+        content.appendChild(title);
+
+        const pGrid = document.createElement('div');
+        pGrid.className = 'grid-cards';
+        pGrid.style.marginTop = '10px';
+        directPdfs.forEach((f) => pGrid.appendChild(createPdfCard(f, false)));
+        content.appendChild(pGrid);
+      }
+    }
+
+    function createPdfCard(file, showFolderSub) {
+      const card = document.createElement('div');
+      card.className = 'card';
+      card.innerHTML = `
+        <div class="card-head">
+          <div class="card-icon pdf">📄</div>
+          <div>
+            <div class="card-title">${escapeHtml(prettyName(file.name))}</div>
+            ${showFolderSub && file.folder ? `<div class="card-sub">📁 ${escapeHtml(file.folder.split('/').map(prettyName).join(' › '))}</div>` : ''}
+          </div>
+        </div>
+        <div class="card-footer">
+          <span>${formatSize(file.size) || 'PDF Document'}</span>
+          <div class="card-actions">
+            <button class="mini-btn hide-in-embed" data-embed-pdf="${escapeHtml(file.path)}" title="Blogger Embed Code">&lt;/&gt; Embed</button>
+            <button class="mini-btn" style="background:var(--accent);color:#fff;border-color:var(--accent);">Read</button>
+          </div>
+        </div>
+      `;
+      card.onclick = (e) => {
+        const embBtn = e.target.closest('[data-embed-pdf]');
+        if (embBtn) {
+          e.stopPropagation();
+          openEmbedModal('pdf', embBtn.dataset.embedPdf);
+          return;
+        }
+        loadPDF(file.path);
+      };
+      return card;
+    }
+
+    // Sidebar Quick File List
+    function renderSidebarFiles() {
+      const box = $('sb-file-list');
+      const q = ($('sb-file-search').value || '').trim().toLowerCase();
+      const rootLock = state.lockedRootFolder;
+      const list = state.allFiles.filter((f) => {
+        if (rootLock && f.folder !== rootLock && !f.folder.startsWith(rootLock + '/')) return false;
+        return !q || f.path.toLowerCase().includes(q) || prettyName(f.name).toLowerCase().includes(q);
+      });
+
+      if (!list.length) {
+        box.innerHTML = '<p style="color:var(--text-muted);font-size:12.5px;">No matching PDFs.</p>';
+        return;
+      }
+
+      // Group by folder
+      const groups = new Map();
+      list.forEach((f) => {
+        const g = f.folder || 'Root';
+        if (!groups.has(g)) groups.set(g, []);
+        groups.get(g).push(f);
+      });
+
+      box.innerHTML = '';
+      [...groups.entries()].sort((a, b) => a[0].localeCompare(b[0])).forEach(([folder, files]) => {
+        const h = document.createElement('div');
+        h.className = 'sb-folder-title';
+        h.textContent = '📁 ' + folder.split('/').map(prettyName).join(' › ');
+        box.appendChild(h);
+
+        files.forEach((f) => {
+          const item = document.createElement('div');
+          item.className = 'sb-item' + (state.currentPath === f.path ? ' active' : '');
+          item.innerHTML = `<span>📄</span><span>${escapeHtml(prettyName(f.name))}</span>`;
+          item.onclick = () => loadPDF(f.path);
+          box.appendChild(item);
+        });
+      });
+    }
+
+    // =========================================================================
+    // PDF ENGINE (HiDPI, Lazy Rendering, Text Layer, Search, Bookmarks, TTS)
+    // =========================================================================
     async function loadPDF(source, options = {}) {
-      const { displayUrl = '', useCdn = true, startPage = null } = options;
-      setLoading(true, 'Fetching PDF document...');
+      const { displayName = '', startPage = null } = options;
+      setLoading(true, 'Opening PDF...');
 
       try {
-        // Cancel existing tasks
-        state.renderTasks.forEach((task) => { try { task.cancel(); } catch {} });
+        state.renderTasks.forEach((t) => { try { t.cancel(); } catch {} });
         state.renderTasks.clear();
         state.renderedPages.clear();
         state.renderedThumbs.clear();
         state.pageTexts = [];
         stopTTS();
 
-        let pdfSource = source;
+        let pdfDoc;
         if (typeof source === 'string') {
-          state.rawInputUrl = source;
-          state.resolvedUrl = convertGitHubUrl(source, useCdn);
-          state.docKey = 'gitpdf_' + btoa(unescape(encodeURIComponent(state.resolvedUrl))).slice(0, 48);
-          pdfSource = { url: state.resolvedUrl, cMapUrl: 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/cmaps/', cMapPacked: true };
+          const info = normalizePdfInput(source);
+          state.currentPath = info.relPath;
+          state.resolvedUrl = info.primary;
+          state.fallbackUrl = info.fallback;
+          state.docKey = 'mpyq_' + btoa(unescape(encodeURIComponent(info.relPath || info.primary))).slice(0, 48);
+
+          const loadUrl = async (url) => {
+            const task = pdfjsLib.getDocument({
+              url,
+              cMapUrl: 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/cmaps/',
+              cMapPacked: true
+            });
+            task.onProgress = (p) => {
+              if (p.total) $('loader-text').textContent = `Loading PDF... ${Math.min(100, Math.round((p.loaded / p.total) * 100))}%`;
+            };
+            return task.promise;
+          };
+
+          try {
+            pdfDoc = await loadUrl(state.resolvedUrl);
+          } catch (cdnErr) {
+            // Auto fallback to raw.githubusercontent.com if jsDelivr fails
+            if (state.fallbackUrl && state.fallbackUrl !== state.resolvedUrl) {
+              $('loader-text').textContent = 'Switching to GitHub Raw server...';
+              state.resolvedUrl = state.fallbackUrl;
+              pdfDoc = await loadUrl(state.fallbackUrl);
+            } else {
+              throw cdnErr;
+            }
+          }
         } else {
-          state.rawInputUrl = displayUrl || 'Local File';
+          state.currentPath = '';
           state.resolvedUrl = '';
-          state.docKey = 'gitpdf_local_' + (displayUrl || 'file');
+          state.docKey = 'mpyq_local_' + (displayName || 'file');
+          pdfDoc = await pdfjsLib.getDocument(source).promise;
         }
 
-        const loadingTask = pdfjsLib.getDocument(pdfSource);
-        loadingTask.onProgress = (p) => {
-          if (p.total) {
-            const pct = Math.min(100, Math.round((p.loaded / p.total) * 100));
-            $('loader-text').textContent = `Downloading PDF... ${pct}%`;
-          }
-        };
-
-        state.pdfDoc = await loadingTask.promise;
-        state.numPages = state.pdfDoc.numPages;
-
-        $('welcome-screen').style.display = 'none';
+        state.pdfDoc = pdfDoc;
+        state.numPages = pdfDoc.numPages;
         $('page-count').textContent = state.numPages;
         $('page-input').max = state.numPages;
 
-        // Determine start page (URL param > saved resume page > 1)
-        const savedPage = parseInt(localStorage.getItem(state.docKey + '_lastpage') || '1', 10);
-        const initialPage = Math.max(1, Math.min(state.numPages, startPage || savedPage || 1));
-        state.currentPage = initialPage;
+        showReaderView();
+        renderSidebarFiles();
 
-        // Calculate fit-width if selected
+        const saved = parseInt(localStorage.getItem(state.docKey + '_lastpage') || '1', 10);
+        const initPage = Math.max(1, Math.min(state.numPages, startPage || saved || 1));
+        state.currentPage = initPage;
+
         await computeScale();
         await buildPagePlaceholders();
         buildThumbnails();
         loadOutline();
         renderBookmarks();
-        loadMetadata();
+        goToPage(initPage, false);
 
-        goToPage(initialPage, false);
-        showToast(`Loaded ${state.numPages} pages`);
+        showToast(`Loaded (${state.numPages} pages)`);
       } catch (err) {
         console.error(err);
-        alert(
-          'Could not load PDF.\n\nTips:\n• Make sure the GitHub repository is PUBLIC.\n• Check that the file path ends with .pdf.\n• If file is larger than 50MB, uncheck jsDelivr CDN.\n\nError: ' +
-          (err.message || err)
-        );
+        alert('PDF লোড করা যায়নি।\nনিশ্চিত করুন ফাইলটি Public GitHub repo-তে আছে।\nError: ' + (err.message || err));
       } finally {
         setLoading(false);
       }
     }
 
-    // Compute exact scale for Fit Width / Fit Page / Fixed Zoom
     async function computeScale() {
       if (!state.pdfDoc) return;
-      const page1 = await state.pdfDoc.getPage(1);
-      const baseVp = page1.getViewport({ scale: 1, rotation: state.rotation });
-      const availW = viewerContainer.clientWidth - (state.viewMode === 'book' ? 60 : 40);
-      const availH = viewerContainer.clientHeight - 40;
+      const p1 = await state.pdfDoc.getPage(1);
+      const vp = p1.getViewport({ scale: 1, rotation: state.rotation });
+      const availW = viewerContainer.clientWidth - (state.viewMode === 'book' ? 60 : 36);
+      const availH = viewerContainer.clientHeight - 36;
 
       if (state.zoomMode === 'fit-width') {
-        const divisor = state.viewMode === 'book' ? 2 : 1;
-        state.scale = Math.max(0.4, Math.min(3.0, (availW / divisor) / baseVp.width));
+        const div = state.viewMode === 'book' ? 2 : 1;
+        state.scale = Math.max(0.4, Math.min(2.8, (availW / div) / vp.width));
       } else if (state.zoomMode === 'fit-page') {
-        state.scale = Math.max(0.4, Math.min(3.0, Math.min(availW / baseVp.width, availH / baseVp.height)));
+        state.scale = Math.max(0.4, Math.min(2.8, Math.min(availW / vp.width, availH / vp.height)));
       } else {
         state.scale = parseFloat(state.zoomMode) || 1.25;
       }
     }
 
-    // Build Lightweight Page Containers + IntersectionObserver
     async function buildPagePlaceholders() {
       if (state.pageObserver) state.pageObserver.disconnect();
       state.renderedPages.clear();
@@ -1157,433 +1223,289 @@
       if (state.viewMode === 'book') pagesWrapper.classList.add('view-book');
       if (state.viewMode === 'single') pagesWrapper.classList.add('view-single');
 
-      const page1 = await state.pdfDoc.getPage(1);
-      const estVp = page1.getViewport({ scale: state.scale, rotation: state.rotation });
-
+      const p1 = await state.pdfDoc.getPage(1);
+      const est = p1.getViewport({ scale: state.scale, rotation: state.rotation });
       const frag = document.createDocumentFragment();
+
       for (let i = 1; i <= state.numPages; i++) {
         const shell = document.createElement('div');
         shell.className = 'page-shell';
         shell.dataset.page = i;
-        shell.style.width = `${Math.floor(estVp.width)}px`;
-        shell.style.height = `${Math.floor(estVp.height)}px`;
-
-        const canvas = document.createElement('canvas');
-        const textLayer = document.createElement('div');
-        textLayer.className = 'textLayer';
-
-        const badge = document.createElement('div');
-        badge.className = 'page-badge';
-        badge.textContent = `Page ${i}`;
-
-        shell.appendChild(canvas);
-        shell.appendChild(textLayer);
-        shell.appendChild(badge);
+        shell.style.width = `${Math.floor(est.width)}px`;
+        shell.style.height = `${Math.floor(est.height)}px`;
+        shell.innerHTML = `<canvas></canvas><div class="textLayer"></div><div class="page-badge">Page ${i}</div>`;
         frag.appendChild(shell);
       }
       pagesWrapper.appendChild(frag);
 
       state.pageObserver = new IntersectionObserver(
-        (entries) => {
-          entries.forEach((entry) => {
-            if (entry.isIntersecting) {
-              const pNum = parseInt(entry.target.dataset.page, 10);
-              renderPage(pNum);
-            }
-          });
-        },
+        (entries) => entries.forEach((en) => { if (en.isIntersecting) renderPage(+en.target.dataset.page); }),
         { root: viewerContainer, rootMargin: '600px 0px' }
       );
-
       document.querySelectorAll('.page-shell').forEach((el) => state.pageObserver.observe(el));
-
-      if (state.viewMode === 'single') {
-        updateSinglePageVisibility();
-      }
+      if (state.viewMode === 'single') updateSinglePage();
     }
 
-    // Render Single Page (HiDPI Canvas + Selectable Text Layer)
     async function renderPage(pageNum) {
       if (!state.pdfDoc || state.renderedPages.has(pageNum)) return;
       const shell = pagesWrapper.querySelector(`.page-shell[data-page="${pageNum}"]`);
       if (!shell) return;
-
       state.renderedPages.add(pageNum);
 
       try {
         const page = await state.pdfDoc.getPage(pageNum);
-        const viewport = page.getViewport({ scale: state.scale, rotation: state.rotation });
+        const vp = page.getViewport({ scale: state.scale, rotation: state.rotation });
         const dpr = Math.min(window.devicePixelRatio || 1, 2.5);
 
-        shell.style.width = `${Math.floor(viewport.width)}px`;
-        shell.style.height = `${Math.floor(viewport.height)}px`;
+        shell.style.width = `${Math.floor(vp.width)}px`;
+        shell.style.height = `${Math.floor(vp.height)}px`;
 
         const canvas = shell.querySelector('canvas');
-        const ctx = canvas.getContext('2d', { alpha: false });
-        canvas.width = Math.floor(viewport.width * dpr);
-        canvas.height = Math.floor(viewport.height * dpr);
-        canvas.style.width = `${Math.floor(viewport.width)}px`;
-        canvas.style.height = `${Math.floor(viewport.height)}px`;
+        canvas.width = Math.floor(vp.width * dpr);
+        canvas.height = Math.floor(vp.height * dpr);
+        canvas.style.width = `${Math.floor(vp.width)}px`;
+        canvas.style.height = `${Math.floor(vp.height)}px`;
 
-        const renderContext = {
-          canvasContext: ctx,
-          viewport,
+        const task = page.render({
+          canvasContext: canvas.getContext('2d', { alpha: false }),
+          viewport: vp,
           transform: dpr !== 1 ? [dpr, 0, 0, dpr, 0, 0] : null
-        };
-
-        const renderTask = page.render(renderContext);
-        state.renderTasks.set(pageNum, renderTask);
-        await renderTask.promise;
+        });
+        state.renderTasks.set(pageNum, task);
+        await task.promise;
         state.renderTasks.delete(pageNum);
 
-        // Render Text Layer for Selection & Search Highlighting
-        const textLayerDiv = shell.querySelector('.textLayer');
-        textLayerDiv.innerHTML = '';
-        textLayerDiv.style.width = `${Math.floor(viewport.width)}px`;
-        textLayerDiv.style.height = `${Math.floor(viewport.height)}px`;
-        textLayerDiv.style.setProperty('--scale-factor', viewport.scale);
+        const tl = shell.querySelector('.textLayer');
+        tl.innerHTML = '';
+        tl.style.width = `${Math.floor(vp.width)}px`;
+        tl.style.height = `${Math.floor(vp.height)}px`;
+        tl.style.setProperty('--scale-factor', vp.scale);
 
-        const textContent = await page.getTextContent();
-        await pdfjsLib.renderTextLayer({
-          textContentSource: textContent,
-          container: textLayerDiv,
-          viewport,
-          textDivs: []
-        }).promise;
-
-        if (state.searchQuery) {
-          applyHighlightsToPage(pageNum);
-        }
+        const tc = await page.getTextContent();
+        await pdfjsLib.renderTextLayer({ textContentSource: tc, container: tl, viewport: vp, textDivs: [] }).promise;
+        if (state.searchQuery) applyHighlightsToPage(pageNum);
       } catch (e) {
-        if (e?.name !== 'RenderingCancelledException') {
-          state.renderedPages.delete(pageNum);
-        }
+        if (e?.name !== 'RenderingCancelledException') state.renderedPages.delete(pageNum);
       }
     }
 
-    // Build Lazy Thumbnails
     function buildThumbnails() {
       if (state.thumbObserver) state.thumbObserver.disconnect();
-      const container = $('panel-thumbs');
-      container.innerHTML = '';
+      const box = $('panel-thumbs');
+      box.innerHTML = '';
       state.renderedThumbs.clear();
-
       const frag = document.createDocumentFragment();
       for (let i = 1; i <= state.numPages; i++) {
-        const card = document.createElement('div');
-        card.className = 'thumb-card' + (i === state.currentPage ? ' active' : '');
-        card.dataset.page = i;
-        card.innerHTML = `<canvas width="140" height="190"></canvas><div class="thumb-label">Page ${i}</div>`;
-        card.onclick = () => goToPage(i);
-        frag.appendChild(card);
+        const c = document.createElement('div');
+        c.className = 'thumb-card' + (i === state.currentPage ? ' active' : '');
+        c.dataset.page = i;
+        c.innerHTML = `<canvas width="140" height="190"></canvas><div class="thumb-label">Page ${i}</div>`;
+        c.onclick = () => goToPage(i);
+        frag.appendChild(c);
       }
-      container.appendChild(frag);
+      box.appendChild(frag);
 
       state.thumbObserver = new IntersectionObserver(
-        (entries) => {
-          entries.forEach((entry) => {
-            if (entry.isIntersecting) {
-              const pNum = parseInt(entry.target.dataset.page, 10);
-              renderThumb(pNum, entry.target.querySelector('canvas'));
-            }
-          });
-        },
-        { root: container, rootMargin: '300px 0px' }
+        (entries) => entries.forEach(async (en) => {
+          if (!en.isIntersecting) return;
+          const p = +en.target.dataset.page;
+          if (state.renderedThumbs.has(p)) return;
+          state.renderedThumbs.add(p);
+          try {
+            const page = await state.pdfDoc.getPage(p);
+            const vp = page.getViewport({ scale: 0.25 });
+            const cv = en.target.querySelector('canvas');
+            cv.width = vp.width; cv.height = vp.height;
+            await page.render({ canvasContext: cv.getContext('2d'), viewport: vp }).promise;
+          } catch {}
+        }),
+        { root: box, rootMargin: '250px 0px' }
       );
-
-      container.querySelectorAll('.thumb-card').forEach((el) => state.thumbObserver.observe(el));
+      box.querySelectorAll('.thumb-card').forEach((el) => state.thumbObserver.observe(el));
     }
 
-    async function renderThumb(pageNum, canvas) {
-      if (!state.pdfDoc || state.renderedThumbs.has(pageNum)) return;
-      state.renderedThumbs.add(pageNum);
-      try {
-        const page = await state.pdfDoc.getPage(pageNum);
-        const vp = page.getViewport({ scale: 0.25 });
-        canvas.width = vp.width;
-        canvas.height = vp.height;
-        await page.render({ canvasContext: canvas.getContext('2d'), viewport: vp }).promise;
-      } catch {}
-    }
-
-    // Load PDF Outline (TOC)
     async function loadOutline() {
       const panel = $('panel-outline');
       panel.innerHTML = '';
       try {
         const outline = await state.pdfDoc.getOutline();
-        if (!outline || !outline.length) {
-          panel.innerHTML = '<p style="color:var(--text-muted);font-size:13px;">This PDF does not contain a Table of Contents.</p>';
+        if (!outline?.length) {
+          panel.innerHTML = '<p style="color:var(--text-muted);font-size:12.5px;">No Table of Contents in this PDF.</p>';
           return;
         }
-        function renderItems(items, depth = 0) {
-          items.forEach((item) => {
-            const div = document.createElement('div');
-            div.className = 'outline-item';
-            div.style.paddingLeft = `${8 + depth * 14}px`;
-            div.textContent = item.title;
-            div.onclick = async () => {
-              if (!item.dest) return;
-              let dest = item.dest;
-              if (typeof dest === 'string') dest = await state.pdfDoc.getDestination(dest);
-              if (Array.isArray(dest) && dest[0]) {
-                const idx = await state.pdfDoc.getPageIndex(dest[0]);
-                goToPage(idx + 1);
-              }
-            };
-            panel.appendChild(div);
-            if (item.items && item.items.length) renderItems(item.items, depth + 1);
-          });
-        }
-        renderItems(outline);
-      } catch {
-        panel.innerHTML = '<p style="color:var(--text-muted);font-size:13px;">Could not load Table of Contents.</p>';
-      }
-    }
-
-    // Document Metadata
-    async function loadMetadata() {
-      try {
-        const meta = await state.pdfDoc.getMetadata();
-        const info = meta?.info || {};
-        $('doc-info-content').innerHTML = `
-          <div><b>Title:</b> ${escapeHtml(info.Title || 'Untitled')}</div>
-          <div><b>Author:</b> ${escapeHtml(info.Author || 'Unknown')}</div>
-          <div><b>Subject:</b> ${escapeHtml(info.Subject || '—')}</div>
-          <div><b>Creator:</b> ${escapeHtml(info.Creator || '—')}</div>
-          <div><b>PDF Version:</b> ${escapeHtml(info.PDFFormatVersion || '—')}</div>
-          <div><b>Total Pages:</b> ${state.numPages}</div>
-          <div style="word-break:break-all;"><b>Source:</b> ${escapeHtml(state.resolvedUrl || state.rawInputUrl)}</div>
-        `;
+        const addItems = (items, depth = 0) => items.forEach((it) => {
+          const d = document.createElement('div');
+          d.className = 'outline-item';
+          d.style.paddingLeft = `${8 + depth * 14}px`;
+          d.textContent = it.title;
+          d.onclick = async () => {
+            let dest = typeof it.dest === 'string' ? await state.pdfDoc.getDestination(it.dest) : it.dest;
+            if (Array.isArray(dest) && dest[0]) goToPage((await state.pdfDoc.getPageIndex(dest[0])) + 1);
+          };
+          panel.appendChild(d);
+          if (it.items?.length) addItems(it.items, depth + 1);
+        });
+        addItems(outline);
       } catch {}
     }
 
-    // Navigation & Sync
-    function updateSinglePageVisibility() {
-      document.querySelectorAll('.page-shell').forEach((el) => {
-        el.classList.toggle('current-single', parseInt(el.dataset.page, 10) === state.currentPage);
-      });
+    function updateSinglePage() {
+      document.querySelectorAll('.page-shell').forEach((el) =>
+        el.classList.toggle('current-single', +el.dataset.page === state.currentPage)
+      );
       renderPage(state.currentPage);
     }
 
-    function setCurrentPageUI(pageNum) {
-      state.currentPage = Math.max(1, Math.min(state.numPages || 1, pageNum));
+    function syncPageUI(p) {
+      state.currentPage = Math.max(1, Math.min(state.numPages || 1, p));
       $('page-input').value = state.currentPage;
       $('note-page-num').textContent = state.currentPage;
-
-      // Progress bar
-      const pct = state.numPages ? (state.currentPage / state.numPages) * 100 : 0;
-      $('reading-progress').style.width = `${pct}%`;
-
-      // Active thumb
+      $('reading-progress').style.width = `${state.numPages ? (state.currentPage / state.numPages) * 100 : 0}%`;
       document.querySelectorAll('.thumb-card.active').forEach((el) => el.classList.remove('active'));
-      const activeThumb = document.querySelector(`.thumb-card[data-page="${state.currentPage}"]`);
-      if (activeThumb) activeThumb.classList.add('active');
-
-      // Save last read page
+      document.querySelector(`.thumb-card[data-page="${state.currentPage}"]`)?.classList.add('active');
       if (state.docKey) localStorage.setItem(state.docKey + '_lastpage', state.currentPage);
     }
 
-    function goToPage(pageNum, smooth = true) {
+    function goToPage(p, smooth = true) {
       if (!state.pdfDoc) return;
-      pageNum = Math.max(1, Math.min(state.numPages, pageNum));
-      setCurrentPageUI(pageNum);
-
-      if (state.viewMode === 'single') {
-        updateSinglePageVisibility();
-        viewerContainer.scrollTop = 0;
-        return;
-      }
-
-      const target = pagesWrapper.querySelector(`.page-shell[data-page="${pageNum}"]`);
-      if (target) {
-        renderPage(pageNum);
-        target.scrollIntoView({ behavior: smooth ? 'smooth' : 'auto', block: 'start' });
-      }
+      p = Math.max(1, Math.min(state.numPages, p));
+      syncPageUI(p);
+      if (state.viewMode === 'single') { updateSinglePage(); viewerContainer.scrollTop = 0; return; }
+      const target = pagesWrapper.querySelector(`.page-shell[data-page="${p}"]`);
+      if (target) { renderPage(p); target.scrollIntoView({ behavior: smooth ? 'smooth' : 'auto', block: 'start' }); }
     }
+    window.goToPage = goToPage;
 
-    // Track scroll to sync current page
-    let scrollTimeout;
+    let scrollT;
     viewerContainer.addEventListener('scroll', () => {
-      if (!state.pdfDoc || state.viewMode === 'single') return;
-      clearTimeout(scrollTimeout);
-      scrollTimeout = setTimeout(() => {
-        const shells = pagesWrapper.querySelectorAll('.page-shell');
+      if (!state.pdfDoc || document.body.classList.contains('mode-library') || state.viewMode === 'single') return;
+      clearTimeout(scrollT);
+      scrollT = setTimeout(() => {
         const mid = viewerContainer.scrollTop + viewerContainer.clientHeight * 0.35;
-        for (const el of shells) {
-          if (el.offsetTop + el.offsetHeight >= mid) {
-            setCurrentPageUI(parseInt(el.dataset.page, 10));
-            break;
-          }
+        for (const el of pagesWrapper.querySelectorAll('.page-shell')) {
+          if (el.offsetTop + el.offsetHeight >= mid) { syncPageUI(+el.dataset.page); break; }
         }
       }, 60);
     });
 
-    // Re-render all pages (after zoom / rotation / view mode change)
     async function refreshLayout() {
       if (!state.pdfDoc) return;
-      const keepPage = state.currentPage;
+      const keep = state.currentPage;
       state.renderTasks.forEach((t) => { try { t.cancel(); } catch {} });
       state.renderTasks.clear();
       await computeScale();
       await buildPagePlaceholders();
-      goToPage(keepPage, false);
+      goToPage(keep, false);
     }
 
-    // Full-Text Search Engine
-    async function extractAllText() {
-      if (state.pageTexts.length === state.numPages) return;
-      $('search-status').textContent = 'Indexing pages...';
-      state.pageTexts = [];
-      for (let i = 1; i <= state.numPages; i++) {
-        const page = await state.pdfDoc.getPage(i);
-        const content = await page.getTextContent();
-        const text = content.items.map((it) => it.str).join(' ');
-        state.pageTexts.push(text);
-      }
-    }
-
-    async function runSearch(query) {
-      state.searchQuery = query.trim();
+    // In-PDF Search
+    async function runSearch(q) {
+      state.searchQuery = q.trim();
       state.searchMatches = [];
       state.activeMatchIdx = -1;
-      const listEl = $('search-results-list');
-      listEl.innerHTML = '';
-
-      // Clear previous highlights
-      document.querySelectorAll('.textLayer .search-highlight').forEach((el) => {
-        el.classList.remove('search-highlight', 'current-match');
-      });
-
+      $('search-results-list').innerHTML = '';
+      document.querySelectorAll('.search-highlight').forEach((el) => el.classList.remove('search-highlight', 'current-match'));
       if (!state.pdfDoc || !state.searchQuery) {
         $('search-status').textContent = 'Type to search';
         $('search-counter').textContent = '';
         return;
       }
-
-      await extractAllText();
-      const qLower = state.searchQuery.toLowerCase();
-
+      if (state.pageTexts.length !== state.numPages) {
+        $('search-status').textContent = 'Indexing pages...';
+        state.pageTexts = [];
+        for (let i = 1; i <= state.numPages; i++) {
+          const tc = await (await state.pdfDoc.getPage(i)).getTextContent();
+          state.pageTexts.push(tc.items.map((x) => x.str).join(' '));
+        }
+      }
+      const ql = state.searchQuery.toLowerCase();
       state.pageTexts.forEach((txt, idx) => {
-        const lower = txt.toLowerCase();
-        let pos = 0;
-        let occurrence = 0;
-        while ((pos = lower.indexOf(qLower, pos)) !== -1) {
-          const start = Math.max(0, pos - 35);
-          const end = Math.min(txt.length, pos + state.searchQuery.length + 45);
-          const snippet = txt.slice(start, end);
-          state.searchMatches.push({ page: idx + 1, occurrence, snippet });
-          pos += qLower.length;
-          occurrence++;
+        const low = txt.toLowerCase();
+        let pos = 0, occ = 0;
+        while ((pos = low.indexOf(ql, pos)) !== -1) {
+          state.searchMatches.push({
+            page: idx + 1, occ,
+            snippet: txt.slice(Math.max(0, pos - 30), Math.min(txt.length, pos + ql.length + 40))
+          });
+          pos += ql.length; occ++;
         }
       });
-
       if (!state.searchMatches.length) {
-        $('search-status').textContent = 'No matches found';
+        $('search-status').textContent = 'No matches';
         $('search-counter').textContent = '0 / 0';
         return;
       }
-
-      $('search-status').textContent = `Found in document`;
-      const regex = new RegExp(`(${state.searchQuery.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi');
-
-      state.searchMatches.slice(0, 60).forEach((m, i) => {
-        const item = document.createElement('div');
-        item.className = 'search-item';
-        item.dataset.idx = i;
-        item.innerHTML = `<b>Page ${m.page}:</b> ...${escapeHtml(m.snippet).replace(regex, '<mark>$1</mark>')}...`;
-        item.onclick = () => jumpToMatch(i);
-        listEl.appendChild(item);
+      $('search-status').textContent = 'Matches found';
+      const rx = new RegExp(`(${state.searchQuery.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi');
+      state.searchMatches.slice(0, 50).forEach((m, i) => {
+        const d = document.createElement('div');
+        d.className = 'search-item';
+        d.dataset.idx = i;
+        d.innerHTML = `<b>Page ${m.page}:</b> ...${escapeHtml(m.snippet).replace(rx, '<mark>$1</mark>')}...`;
+        d.onclick = () => jumpMatch(i);
+        $('search-results-list').appendChild(d);
       });
-
-      state.renderedPages.forEach((pNum) => applyHighlightsToPage(pNum));
-      jumpToMatch(0);
+      state.renderedPages.forEach(applyHighlightsToPage);
+      jumpMatch(0);
     }
 
-    function applyHighlightsToPage(pageNum) {
+    function applyHighlightsToPage(p) {
       if (!state.searchQuery) return;
-      const shell = pagesWrapper.querySelector(`.page-shell[data-page="${pageNum}"]`);
-      if (!shell) return;
-      const qLower = state.searchQuery.toLowerCase();
-      shell.querySelectorAll('.textLayer span').forEach((sp) => {
-        if (sp.textContent.toLowerCase().includes(qLower)) {
-          sp.classList.add('search-highlight');
-        }
+      const ql = state.searchQuery.toLowerCase();
+      pagesWrapper.querySelectorAll(`.page-shell[data-page="${p}"] .textLayer span`).forEach((sp) => {
+        if (sp.textContent.toLowerCase().includes(ql)) sp.classList.add('search-highlight');
       });
     }
 
-    async function jumpToMatch(idx) {
+    async function jumpMatch(i) {
       if (!state.searchMatches.length) return;
-      state.activeMatchIdx = (idx + state.searchMatches.length) % state.searchMatches.length;
-      const match = state.searchMatches[state.activeMatchIdx];
-
+      state.activeMatchIdx = (i + state.searchMatches.length) % state.searchMatches.length;
+      const m = state.searchMatches[state.activeMatchIdx];
       $('search-counter').textContent = `${state.activeMatchIdx + 1} / ${state.searchMatches.length}`;
       document.querySelectorAll('.search-item.active').forEach((el) => el.classList.remove('active'));
-      const listItem = document.querySelector(`.search-item[data-idx="${state.activeMatchIdx}"]`);
-      if (listItem) {
-        listItem.classList.add('active');
-        listItem.scrollIntoView({ block: 'nearest' });
-      }
-
-      goToPage(match.page);
-      await renderPage(match.page);
-      applyHighlightsToPage(match.page);
-
-      document.querySelectorAll('.search-highlight.current-match').forEach((el) => el.classList.remove('current-match'));
-      const shell = pagesWrapper.querySelector(`.page-shell[data-page="${match.page}"]`);
-      const spans = shell?.querySelectorAll('.search-highlight');
-      if (spans && spans.length) {
-        const targetSpan = spans[Math.min(match.occurrence, spans.length - 1)];
-        targetSpan.classList.add('current-match');
-        targetSpan.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      document.querySelector(`.search-item[data-idx="${state.activeMatchIdx}"]`)?.classList.add('active');
+      goToPage(m.page);
+      await renderPage(m.page);
+      applyHighlightsToPage(m.page);
+      document.querySelectorAll('.current-match').forEach((el) => el.classList.remove('current-match'));
+      const spans = pagesWrapper.querySelectorAll(`.page-shell[data-page="${m.page}"] .search-highlight`);
+      if (spans.length) {
+        const sp = spans[Math.min(m.occ, spans.length - 1)];
+        sp.classList.add('current-match');
+        sp.scrollIntoView({ behavior: 'smooth', block: 'center' });
       }
     }
 
-    // Bookmarks & Notes (LocalStorage per PDF)
-    function getBookmarks() {
-      if (!state.docKey) return [];
-      try { return JSON.parse(localStorage.getItem(state.docKey + '_bm') || '[]'); }
-      catch { return []; }
-    }
-    function saveBookmarks(list) {
-      if (!state.docKey) return;
-      localStorage.setItem(state.docKey + '_bm', JSON.stringify(list));
-      renderBookmarks();
-    }
-    function addBookmark(noteText = '') {
-      if (!state.pdfDoc) return showToast('Open a PDF first');
-      const list = getBookmarks();
-      list.unshift({
-        id: Date.now(),
-        page: state.currentPage,
-        note: noteText.trim() || `Bookmarked Page ${state.currentPage}`,
-        date: new Date().toLocaleDateString()
-      });
-      saveBookmarks(list);
-      showToast(`Bookmarked Page ${state.currentPage}`);
-    }
+    // Bookmarks & Notes
+    const getBMs = () => { try { return JSON.parse(localStorage.getItem(state.docKey + '_bm') || '[]'); } catch { return []; } };
     function renderBookmarks() {
-      const container = $('bookmarks-list');
-      const list = getBookmarks();
-      if (!list.length) {
-        container.innerHTML = '<p style="color:var(--text-muted);font-size:12.5px;">No bookmarks saved for this PDF yet.</p>';
-        return;
-      }
-      container.innerHTML = list.map((b) => `
+      const box = $('bookmarks-list');
+      const list = getBMs();
+      if (!list.length) { box.innerHTML = '<p style="color:var(--text-muted);font-size:12.5px;">No bookmarks yet.</p>'; return; }
+      box.innerHTML = list.map((b) => `
         <div class="bookmark-item">
           <div class="bookmark-head">
             <span class="bookmark-link" onclick="goToPage(${b.page})">Page ${b.page}</span>
-            <button class="bookmark-del" onclick="deleteBookmark(${b.id})" title="Delete">✕</button>
+            <button class="bookmark-del" onclick="deleteBM(${b.id})">✕</button>
           </div>
-          <div style="color:var(--text-main);">${escapeHtml(b.note)}</div>
-          <div style="color:var(--text-muted);font-size:11px;margin-top:4px;">${b.date}</div>
+          <div>${escapeHtml(b.note)}</div>
         </div>
       `).join('');
     }
-    window.deleteBookmark = (id) => saveBookmarks(getBookmarks().filter((b) => b.id !== id));
-    window.goToPage = goToPage;
+    function addBookmark(note = '') {
+      if (!state.pdfDoc) return;
+      const list = getBMs();
+      list.unshift({ id: Date.now(), page: state.currentPage, note: note.trim() || `Page ${state.currentPage}` });
+      localStorage.setItem(state.docKey + '_bm', JSON.stringify(list));
+      renderBookmarks();
+      showToast(`Bookmarked Page ${state.currentPage}`);
+    }
+    window.deleteBM = (id) => {
+      localStorage.setItem(state.docKey + '_bm', JSON.stringify(getBMs().filter((x) => x.id !== id)));
+      renderBookmarks();
+    };
 
-    // Text-to-Speech (Read Aloud)
+    // Read Aloud (TTS)
     function stopTTS() {
       if ('speechSynthesis' in window) window.speechSynthesis.cancel();
       state.ttsActive = false;
@@ -1591,70 +1513,71 @@
       $('tts-status').textContent = `🔊 Ready (Page ${state.currentPage})`;
     }
     async function startTTS() {
-      if (!state.pdfDoc) return;
-      if (!('speechSynthesis' in window)) return showToast('Speech Synthesis not supported in this browser');
+      if (!state.pdfDoc || !('speechSynthesis' in window)) return;
       window.speechSynthesis.cancel();
-
-      const page = await state.pdfDoc.getPage(state.currentPage);
-      const tc = await page.getTextContent();
-      const text = tc.items.map((i) => i.str).join(' ').trim();
-      if (!text) return showToast('No readable text found on this page');
-
-      const utter = new SpeechSynthesisUtterance(text);
-      utter.rate = parseFloat($('tts-rate').value) || 1;
-      utter.onstart = () => {
-        state.ttsActive = true;
-        $('tts-play').textContent = 'Pause';
-        $('tts-status').textContent = `🔊 Reading Page ${state.currentPage}...`;
-      };
-      utter.onend = () => stopTTS();
-      window.speechSynthesis.speak(utter);
+      const tc = await (await state.pdfDoc.getPage(state.currentPage)).getTextContent();
+      const text = tc.items.map((x) => x.str).join(' ').trim();
+      if (!text) return showToast('No readable text on this page');
+      const u = new SpeechSynthesisUtterance(text);
+      u.rate = parseFloat($('tts-rate').value) || 1;
+      u.onstart = () => { state.ttsActive = true; $('tts-play').textContent = 'Pause'; $('tts-status').textContent = `🔊 Reading Page ${state.currentPage}`; };
+      u.onend = stopTTS;
+      window.speechSynthesis.speak(u);
     }
 
-    // Blogger Embed Generator Logic
+    // =========================================================================
+    // BLOGGER EMBED GENERATOR (Single PDF / Subject Folder / Full Library)
+    // =========================================================================
+    function openEmbedModal(type, targetPath = '') {
+      $('embed-type').value = type;
+      if (type === 'pdf') $('embed-pdf-path').value = targetPath || state.currentPath || state.resolvedUrl || '';
+      if (type === 'folder') $('embed-folder-path').value = targetPath || state.currentFolder || '';
+      updateEmbedCode();
+      $('embed-modal').classList.add('open');
+    }
+
     function updateEmbedCode() {
-      let readerUrl = $('embed-reader-url').value.trim();
-      if (!readerUrl) {
-        readerUrl = window.location.href.split('?')[0];
-      }
-      const rawPdf = $('embed-pdf-url').value.trim();
-      const cdnMode = $('embed-cdn').value;
-      const theme = $('embed-theme').value;
-      const height = $('embed-height').value.trim() || '750px';
-      const page = $('embed-page').value || '1';
-      const compact = $('embed-compact').checked;
-      const allowDl = $('embed-download').checked;
-      const pdfDark = $('embed-pdfdark').checked;
+      const type = $('embed-type').value;
+      $('embed-target-pdf-wrap').style.display = type === 'pdf' ? 'flex' : 'none';
+      $('embed-target-folder-wrap').style.display = type === 'folder' ? 'flex' : 'none';
 
-      const finalPdfUrl = convertGitHubUrl(rawPdf, cdnMode === 'jsdelivr');
+      const base = window.location.protocol.startsWith('http')
+        ? window.location.href.split('?')[0]
+        : REPO.readerBase;
+
       const params = new URLSearchParams();
-      if (finalPdfUrl) params.set('file', finalPdfUrl);
-      if (theme !== 'dark') params.set('theme', theme);
-      if (page && page !== '1') params.set('page', page);
-      if (compact) params.set('embed', 'true');
-      if (!allowDl) params.set('download', '0');
-      if (pdfDark) params.set('pdfDark', '1');
+      if (type === 'pdf') {
+        const p = $('embed-pdf-path').value.trim();
+        if (p) params.set('file', normalizePdfInput(p).relPath || p);
+      } else if (type === 'folder') {
+        const f = $('embed-folder-path').value.trim().replace(/^\/+|\/+$/g, '');
+        if (f) params.set('folder', f);
+      }
 
-      const fullSrc = `${readerUrl}?${params.toString()}`;
+      if ($('embed-theme').value !== 'dark') params.set('theme', $('embed-theme').value);
+      if ($('embed-compact').checked) params.set('embed', 'true');
+      if (!$('embed-download').checked) params.set('download', '0');
+      if ($('embed-pdfdark').checked) params.set('pdfDark', '1');
 
-      const snippet = `<!-- GitPDF Pro Blogger Embed -->
+      const src = params.toString() ? `${base}?${params.toString()}` : base;
+      const h = $('embed-height').value.trim() || '760px';
+
+      $('embed-output').value = `<!-- Madhyamik PYQ PDF Embed -->
 <div style="width:100%; max-width:100%; margin:16px 0; border-radius:10px; overflow:hidden; box-shadow:0 6px 24px rgba(0,0,0,0.18);">
   <iframe
-    src="${fullSrc}"
+    src="${src}"
     width="100%"
-    height="${height}"
+    height="${h}"
     style="border:none; display:block;"
     allowfullscreen
     loading="lazy"
-    title="PDF Reader">
+    title="Madhyamik PYQ PDF Reader">
   </iframe>
 </div>`;
-
-      $('embed-output').value = snippet;
-      $('embed-output').dataset.previewUrl = fullSrc;
+      $('embed-output').dataset.previewUrl = src;
     }
 
-    // Event Listeners
+    // Event Bindings
     $('btn-sidebar').onclick = () => $('sidebar').classList.toggle('collapsed');
     document.querySelectorAll('.sidebar-tab').forEach((tab) => {
       tab.onclick = () => {
@@ -1664,144 +1587,85 @@
       };
     });
 
+    $('btn-home').onclick = () => { if (!document.body.classList.contains('single-embed')) showLibraryView(state.lockedRootFolder); };
+    $('btn-back-lib').onclick = () => showLibraryView(state.currentFolder || state.lockedRootFolder);
+    $('btn-refresh-repo').onclick = () => { fetchRepoTree(true); showToast('Refreshing GitHub folders...'); };
+    $('lib-search-input').oninput = renderLibrary;
+    $('sb-file-search').oninput = renderSidebarFiles;
+
     $('btn-prev').onclick = () => goToPage(state.currentPage - 1);
     $('btn-next').onclick = () => goToPage(state.currentPage + 1);
-    $('page-input').onchange = (e) => goToPage(parseInt(e.target.value, 10) || 1);
-
-    $('zoom-select').onchange = (e) => {
-      state.zoomMode = e.target.value;
-      refreshLayout();
-    };
-    $('btn-zoom-in').onclick = () => {
-      state.scale = Math.min(3.0, +(state.scale + 0.25).toFixed(2));
-      state.zoomMode = String(state.scale);
-      $('zoom-select').value = state.zoomMode;
-      refreshLayout();
-    };
-    $('btn-zoom-out').onclick = () => {
-      state.scale = Math.max(0.5, +(state.scale - 0.25).toFixed(2));
-      state.zoomMode = String(state.scale);
-      $('zoom-select').value = state.zoomMode;
-      refreshLayout();
-    };
-
-    $('view-mode').onchange = (e) => {
-      state.viewMode = e.target.value;
-      refreshLayout();
-    };
-    $('btn-rotate').onclick = () => {
-      state.rotation = (state.rotation + 90) % 360;
-      refreshLayout();
-    };
-    $('btn-pdf-dark').onclick = () => {
-      document.body.classList.toggle('pdf-dark-mode');
-      $('btn-pdf-dark').classList.toggle('active');
-    };
-    $('theme-select').onchange = (e) => {
-      document.documentElement.setAttribute('data-theme', e.target.value);
-    };
-
-    $('btn-fullscreen').onclick = () => {
-      if (!document.fullscreenElement) document.documentElement.requestFullscreen?.();
-      else document.exitFullscreen?.();
-    };
+    $('page-input').onchange = (e) => goToPage(+e.target.value || 1);
+    $('zoom-select').onchange = (e) => { state.zoomMode = e.target.value; refreshLayout(); };
+    $('btn-zoom-in').onclick = () => { state.scale = Math.min(3, +(state.scale + 0.25).toFixed(2)); state.zoomMode = String(state.scale); refreshLayout(); };
+    $('btn-zoom-out').onclick = () => { state.scale = Math.max(0.5, +(state.scale - 0.25).toFixed(2)); state.zoomMode = String(state.scale); refreshLayout(); };
+    $('view-mode').onchange = (e) => { state.viewMode = e.target.value; refreshLayout(); };
+    $('btn-rotate').onclick = () => { state.rotation = (state.rotation + 90) % 360; refreshLayout(); };
+    $('btn-pdf-dark').onclick = () => { document.body.classList.toggle('pdf-dark-mode'); $('btn-pdf-dark').classList.toggle('active'); };
+    $('theme-select').onchange = (e) => document.documentElement.setAttribute('data-theme', e.target.value);
+    $('btn-fullscreen').onclick = () => document.fullscreenElement ? document.exitFullscreen?.() : document.documentElement.requestFullscreen?.();
+    $('btn-bookmark').onclick = () => addBookmark();
+    $('btn-save-note').onclick = () => { addBookmark($('note-input').value); $('note-input').value = ''; };
 
     $('btn-download').onclick = () => {
-      if (!state.resolvedUrl) return showToast('Download is available for URL-loaded PDFs');
+      if (!state.resolvedUrl) return;
       const a = document.createElement('a');
-      a.href = state.resolvedUrl;
+      a.href = state.fallbackUrl || state.resolvedUrl;
       a.target = '_blank';
-      a.download = state.resolvedUrl.split('/').pop() || 'document.pdf';
+      a.download = (state.currentPath || state.resolvedUrl).split('/').pop() || 'document.pdf';
       a.click();
     };
 
-    $('btn-bookmark').onclick = () => addBookmark();
-    $('btn-save-note').onclick = () => {
-      addBookmark($('note-input').value);
-      $('note-input').value = '';
-    };
-
-    // Search UI
-    $('btn-search').onclick = () => {
-      $('search-bar').classList.toggle('open');
-      if ($('search-bar').classList.contains('open')) $('search-input').focus();
-    };
+    $('btn-search').onclick = () => { $('search-bar').classList.toggle('open'); if ($('search-bar').classList.contains('open')) $('search-input').focus(); };
     $('search-close').onclick = () => $('search-bar').classList.remove('open');
-    let searchDebounce;
-    $('search-input').oninput = (e) => {
-      clearTimeout(searchDebounce);
-      searchDebounce = setTimeout(() => runSearch(e.target.value), 300);
-    };
-    $('search-input').onkeydown = (e) => {
-      if (e.key === 'Enter') jumpToMatch(state.activeMatchIdx + (e.shiftKey ? -1 : 1));
-    };
-    $('search-next').onclick = () => jumpToMatch(state.activeMatchIdx + 1);
-    $('search-prev').onclick = () => jumpToMatch(state.activeMatchIdx - 1);
+    let sDeb;
+    $('search-input').oninput = (e) => { clearTimeout(sDeb); sDeb = setTimeout(() => runSearch(e.target.value), 300); };
+    $('search-input').onkeydown = (e) => { if (e.key === 'Enter') jumpMatch(state.activeMatchIdx + (e.shiftKey ? -1 : 1)); };
+    $('search-next').onclick = () => jumpMatch(state.activeMatchIdx + 1);
+    $('search-prev').onclick = () => jumpMatch(state.activeMatchIdx - 1);
 
-    // TTS UI
-    $('btn-tts').onclick = () => {
-      $('tts-bar').classList.toggle('open');
-      $('tts-status').textContent = `🔊 Ready (Page ${state.currentPage})`;
-    };
+    $('btn-tts').onclick = () => { $('tts-bar').classList.toggle('open'); $('tts-status').textContent = `🔊 Ready (Page ${state.currentPage})`; };
     $('tts-close').onclick = () => { stopTTS(); $('tts-bar').classList.remove('open'); };
     $('tts-stop').onclick = stopTTS;
     $('tts-play').onclick = () => {
       if (state.ttsActive && window.speechSynthesis.speaking) {
-        if (window.speechSynthesis.paused) {
-          window.speechSynthesis.resume();
-          $('tts-play').textContent = 'Pause';
-        } else {
-          window.speechSynthesis.pause();
-          $('tts-play').textContent = 'Resume';
-        }
-      } else {
-        startTTS();
-      }
+        if (window.speechSynthesis.paused) { window.speechSynthesis.resume(); $('tts-play').textContent = 'Pause'; }
+        else { window.speechSynthesis.pause(); $('tts-play').textContent = 'Resume'; }
+      } else startTTS();
     };
 
     // Modals
-    const openModal = (id) => $(id).classList.add('open');
-    const closeModal = (id) => $(id).classList.remove('open');
-    document.querySelectorAll('[data-close]').forEach((b) => {
-      b.onclick = () => closeModal(b.dataset.close);
-    });
-    document.querySelectorAll('.modal-backdrop').forEach((bg) => {
-      bg.onclick = (e) => { if (e.target === bg) bg.classList.remove('open'); };
-    });
+    document.querySelectorAll('[data-close]').forEach((b) => b.onclick = () => $(b.dataset.close).classList.remove('open'));
+    document.querySelectorAll('.modal-backdrop').forEach((bg) => bg.onclick = (e) => { if (e.target === bg) bg.classList.remove('open'); });
 
-    $('btn-open-modal').onclick = () => {
-      $('modal-pdf-url').value = state.rawInputUrl.startsWith('http') ? state.rawInputUrl : '';
-      openModal('open-modal');
-    };
+    $('btn-open-modal').onclick = () => $('open-modal').classList.add('open');
     $('btn-modal-load').onclick = () => {
-      const url = $('modal-pdf-url').value.trim();
-      if (!url) return showToast('Please enter a valid PDF URL');
-      closeModal('open-modal');
-      loadPDF(url, { useCdn: $('modal-use-cdn').checked });
+      const u = $('modal-pdf-url').value.trim();
+      if (!u) return showToast('Enter a PDF URL');
+      $('open-modal').classList.remove('open');
+      loadPDF(u);
     };
-    $('btn-modal-local').onclick = () => {
-      closeModal('open-modal');
-      $('file-input').click();
+    $('btn-modal-local').onclick = () => { $('open-modal').classList.remove('open'); $('file-input').click(); };
+    $('file-input').onchange = (e) => {
+      const f = e.target.files[0];
+      if (!f) return;
+      const r = new FileReader();
+      r.onload = () => loadPDF({ data: new Uint8Array(r.result) }, { displayName: f.name });
+      r.readAsArrayBuffer(f);
     };
-    $('btn-info').onclick = () => openModal('info-modal');
 
-    // Embed Modal triggers
-    function openEmbedGenerator() {
-      if (!$('embed-reader-url').value) {
-        $('embed-reader-url').value = window.location.protocol.startsWith('http')
-          ? window.location.href.split('?')[0]
-          : 'https://YOUR_USERNAME.github.io/YOUR_REPO/';
+    $('btn-embed-modal').onclick = () => {
+      if (!document.body.classList.contains('mode-library') && (state.currentPath || state.resolvedUrl)) {
+        openEmbedModal('pdf', state.currentPath || state.resolvedUrl);
+      } else if (state.currentFolder) {
+        openEmbedModal('folder', state.currentFolder);
+      } else {
+        openEmbedModal('library');
       }
-      if (state.rawInputUrl.startsWith('http')) {
-        $('embed-pdf-url').value = state.rawInputUrl;
-      }
-      updateEmbedCode();
-      openModal('embed-modal');
-    }
-    $('btn-embed-modal').onclick = openEmbedGenerator;
-    $('btn-welcome-embed').onclick = openEmbedGenerator;
+    };
+    $('btn-embed-folder').onclick = () => openEmbedModal(state.currentFolder ? 'folder' : 'library', state.currentFolder);
 
-    ['embed-reader-url', 'embed-pdf-url', 'embed-cdn', 'embed-theme', 'embed-height', 'embed-page', 'embed-compact', 'embed-download', 'embed-pdfdark']
+    ['embed-type', 'embed-pdf-path', 'embed-folder-path', 'embed-theme', 'embed-height', 'embed-compact', 'embed-download', 'embed-pdfdark']
       .forEach((id) => $(id).addEventListener('input', updateEmbedCode));
 
     $('btn-copy-embed').onclick = () => {
@@ -1809,43 +1673,15 @@
       showToast('Blogger Embed HTML copied!');
     };
     $('btn-test-embed').onclick = () => {
-      const url = $('embed-output').dataset.previewUrl;
-      if (url) window.open(url, '_blank');
+      const u = $('embed-output').dataset.previewUrl;
+      if (u) window.open(u, '_blank');
     };
 
-    // Welcome Form & Local Dropzone
-    $('welcome-form').onsubmit = (e) => {
-      e.preventDefault();
-      loadPDF($('welcome-url').value.trim(), { useCdn: $('welcome-cdn').checked });
-    };
-    $('btn-load-sample').onclick = () => loadPDF(SAMPLE_PDF, { useCdn: true });
-
-    const dropzone = $('dropzone');
-    dropzone.onclick = () => $('file-input').click();
-    dropzone.ondragover = (e) => { e.preventDefault(); dropzone.classList.add('dragover'); };
-    dropzone.ondragleave = () => dropzone.classList.remove('dragover');
-    dropzone.ondrop = (e) => {
-      e.preventDefault();
-      dropzone.classList.remove('dragover');
-      handleLocalFile(e.dataTransfer.files[0]);
-    };
-    $('file-input').onchange = (e) => handleLocalFile(e.target.files[0]);
-
-    function handleLocalFile(file) {
-      if (!file || file.type !== 'application/pdf') return showToast('Please select a PDF file');
-      const reader = new FileReader();
-      reader.onload = () => loadPDF({ data: new Uint8Array(reader.result) }, { displayUrl: file.name });
-      reader.readAsArrayBuffer(file);
-    }
-
-    // Keyboard Shortcuts
+    // Keyboard shortcuts
     window.addEventListener('keydown', (e) => {
       const tag = document.activeElement?.tagName;
-      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'f') {
-        e.preventDefault();
-        $('search-bar').classList.add('open');
-        $('search-input').focus();
-        return;
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'f' && !document.body.classList.contains('mode-library')) {
+        e.preventDefault(); $('search-bar').classList.add('open'); $('search-input').focus(); return;
       }
       if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT') return;
       if (e.key === 'ArrowRight') goToPage(state.currentPage + 1);
@@ -1857,37 +1693,31 @@
       else if (e.key.toLowerCase() === 'b') addBookmark();
     });
 
-    // Window resize handler for Fit Width / Fit Page
-    let resizeTimer;
+    let rzT;
     window.addEventListener('resize', () => {
-      if (state.zoomMode === 'fit-width' || state.zoomMode === 'fit-page') {
-        clearTimeout(resizeTimer);
-        resizeTimer = setTimeout(refreshLayout, 250);
+      if (!document.body.classList.contains('mode-library') && (state.zoomMode === 'fit-width' || state.zoomMode === 'fit-page')) {
+        clearTimeout(rzT); rzT = setTimeout(refreshLayout, 250);
       }
     });
 
-    // Boot: Parse URL Query Parameters (for Blogger Embeds & Direct Links)
-    (function initFromQuery() {
-      const params = new URLSearchParams(window.location.search);
-      const file = params.get('file');
-      const theme = params.get('theme');
-      const embed = params.get('embed');
-      const download = params.get('download');
-      const pdfDark = params.get('pdfDark');
-      const page = parseInt(params.get('page') || '', 10) || null;
-      const view = params.get('view');
-      const cdn = params.get('cdn') !== 'raw';
+    // Boot App
+    (async function init() {
+      const p = new URLSearchParams(window.location.search);
+      const file = p.get('file');
+      const folder = (p.get('folder') || '').replace(/^\/+|\/+$/g, '');
+      const theme = p.get('theme');
+      const embed = p.get('embed');
+      const dl = p.get('download');
+      const pdfDark = p.get('pdfDark');
+      const page = parseInt(p.get('page') || '', 10) || null;
+      const view = p.get('view');
 
       if (theme && ['dark', 'light', 'sepia'].includes(theme)) {
         document.documentElement.setAttribute('data-theme', theme);
         $('theme-select').value = theme;
       }
-      if (embed === 'true' || embed === '1') {
-        document.body.classList.add('embed-mode');
-      }
-      if (download === '0' || download === 'false') {
-        document.body.classList.add('no-download');
-      }
+      if (embed === 'true' || embed === '1') document.body.classList.add('embed-mode');
+      if (dl === '0' || dl === 'false') document.body.classList.add('no-download');
       if (pdfDark === '1' || pdfDark === 'true') {
         document.body.classList.add('pdf-dark-mode');
         $('btn-pdf-dark').classList.add('active');
@@ -1897,10 +1727,24 @@
         $('view-mode').value = view;
       }
 
+      if (folder) {
+        state.currentFolder = folder;
+        if (embed === 'true' || embed === '1') state.lockedRootFolder = folder;
+      }
+
+      // If embedded for a single PDF, hide library buttons for super clean look
+      if (file && (embed === 'true' || embed === '1')) {
+        document.body.classList.add('single-embed');
+        document.querySelector('[data-tab="thumbs"]').click();
+        loadPDF(file, { startPage: page });
+        return;
+      }
+
+      // Load full repository folder/subfolder tree automatically
+      await fetchRepoTree();
+
       if (file) {
-        state.zoomMode = 'fit-width';
-        $('zoom-select').value = 'fit-width';
-        loadPDF(file, { useCdn: cdn, startPage: page });
+        loadPDF(file, { startPage: page });
       }
     })();
   </script>
